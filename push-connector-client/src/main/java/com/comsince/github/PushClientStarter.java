@@ -48,9 +48,6 @@ public class PushClientStarter {
     private static void send() throws Exception {
         HelloPacket packet = new HelloPacket();
         packet.setBody("hello world".getBytes(HelloPacket.CHARSET));
-
-        for(int i=0;i<100;i++){
-            Tio.send(clientChannelContext, packet);
-        }
+        Tio.send(clientChannelContext, packet);
     }
 }

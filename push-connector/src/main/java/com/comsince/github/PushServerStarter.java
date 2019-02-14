@@ -35,7 +35,11 @@ public class PushServerStarter {
     /**
      * 启动程序入口
      */
-    public static void main(String[] args) throws IOException {
+//    public static void main(String[] args) throws IOException {
+//        init();
+//    }
+
+    public void init() throws IOException{
         serverGroupContext.setHeartbeatTimeout(Const.TIMEOUT);
         tioServer.start(serverIp, serverPort);
     }
