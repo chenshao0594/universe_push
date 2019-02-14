@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.comsince.github</groupId>
-    <artifactId>universe-push</artifactId>
+    <artifactId>push</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
 
@@ -25,7 +25,10 @@
     </properties>
 
     <modules>
+        <module>tio-core</module>
+        <module>push-common</module>
         <module>push-connector</module>
+        <module>push-connector-client</module>
     </modules>
 
 

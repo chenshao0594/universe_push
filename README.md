@@ -24,3 +24,9 @@
 * [T-io]()
 
 ## 微服务框架
+
+# 模块依赖关系说明
+* tio-core  网络链接核心模块
+* push-common 公共库
+* push-connector 链接网关
+* push-connector-client 测试客户端
