@@ -1,6 +1,8 @@
 package com.comsince.github.handler;
 
 import com.comsince.github.HelloPacket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tio.core.ChannelContext;
 import org.tio.core.GroupContext;
 import org.tio.core.Tio;
@@ -16,6 +18,7 @@ import java.nio.ByteBuffer;
  * @Time 19-2-14 上午10:25
  **/
 public class PushConnectorHandler implements ServerAioHandler{
+    Logger logger = LoggerFactory.getLogger(PushConnectorHandler.class);
     /**
      * 解码：把接收到的ByteBuffer，解码成应用可以识别的业务消息包
      * 总的消息结构：消息头 + 消息体
@@ -99,7 +102,7 @@ public class PushConnectorHandler implements ServerAioHandler{
         byte[] body = helloPacket.getBody();
         if (body != null) {
             String str = new String(body, HelloPacket.CHARSET);
-            System.out.println("收到消息：" + str);
+            logger.info("收到消息：" + str);
 
             HelloPacket resppacket = new HelloPacket();
             resppacket.setBody(("收到了你的消息，你的消息是:" + str).getBytes(HelloPacket.CHARSET));

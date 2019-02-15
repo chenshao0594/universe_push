@@ -1,6 +1,11 @@
 package com.comsince.github;
 
 import com.comsince.github.handler.PushConnectorHandler;
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
+import org.tio.cluster.TioClusterConfig;
+import org.tio.cluster.redisson.RedissonTioClusterTopic;
 import org.tio.server.ServerGroupContext;
 import org.tio.server.TioServer;
 import org.tio.server.intf.ServerAioHandler;
@@ -32,6 +37,9 @@ public class PushServerStarter {
     //监听的端口
     public static int serverPort = Const.PORT;
 
+    //集群配置
+    public static TioClusterConfig tioClusterConfig;
+
     /**
      * 启动程序入口
      */
@@ -40,6 +48,9 @@ public class PushServerStarter {
 //    }
 
     public void init() throws IOException{
+        RedissonClient redissonClient = Redisson.create();
+        tioClusterConfig = new TioClusterConfig(new RedissonTioClusterTopic("push-channel",redissonClient));
+        serverGroupContext.setTioClusterConfig(tioClusterConfig);
         serverGroupContext.setHeartbeatTimeout(Const.TIMEOUT);
         tioServer.start(serverIp, serverPort);
     }
