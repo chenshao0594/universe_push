@@ -26,6 +26,7 @@
 
     <modules>
         <module>tio-core</module>
+        <module>push-auth</module>
         <module>push-common</module>
         <module>push-connector</module>
         <module>push-connector-client</module>
