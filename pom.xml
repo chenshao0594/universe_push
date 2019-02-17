@@ -32,6 +32,7 @@
         <module>push-connector-client</module>
         <module>push-gate</module>
         <module>push-api</module>
+        <module>push-sub</module>
 
     </modules>
 
