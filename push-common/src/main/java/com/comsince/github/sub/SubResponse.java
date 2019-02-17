@@ -1,5 +1,10 @@
 package com.comsince.github.sub;
 
+
+import com.alibaba.fastjson.JSON;
+
+import java.io.UnsupportedEncodingException;
+
 /**
  *
  * 订阅响应格式
@@ -24,6 +29,7 @@ public class SubResponse {
     public void setToken(String token) {
         this.token = token;
     }
+
 
 
 }

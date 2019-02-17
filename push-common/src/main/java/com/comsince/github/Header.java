@@ -55,6 +55,13 @@ public class Header {
         return (((mContents[3] & 0xff) << 8) | (0xff & mContents[4]));
     }
 
+
+    public boolean isValid(){
+        return mContents[0] == (byte)0xf8 &&
+                getLength() >= 0 &&
+                getSignal() != Signal.NONE;
+    }
+
     public static void main(String[] args){
         System.out.println(~(0x01 << 7));
         System.out.println(~0x80);

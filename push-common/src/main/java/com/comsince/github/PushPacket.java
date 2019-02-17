@@ -1,5 +1,7 @@
 package com.comsince.github;
 
+import org.tio.core.ChannelContext;
+import org.tio.core.Tio;
 import org.tio.core.exception.AioDecodeException;
 import org.tio.core.intf.Packet;
 
@@ -30,12 +32,16 @@ public class PushPacket extends Packet {
         return null;
     }
 
-    public PushPacket decode(ByteBuffer byteBuffer, int readableLength) throws AioDecodeException{
+    public PushPacket decode(ByteBuffer byteBuffer, int readableLength, ChannelContext channelContext) throws AioDecodeException{
         if(readableLength < Header.LENGTH){
             return null;
         }
 
         Header header = new Header(byteBuffer);
+        if(!header.isValid()){
+            //如果是非法信息，则直接关闭链接
+            Tio.close(channelContext,"close by invalid signal");
+        }
         setHeader(header);
         //读取消息体的长度
         int bodyLength = header.getLength();

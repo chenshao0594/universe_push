@@ -108,6 +108,6 @@ public class PushClientHandler implements ClientAioHandler {
 
     @Override
     public Packet heartbeatPacket(ChannelContext channelContext) {
-        return heartbeatPacket;
+        return null;
     }
 }

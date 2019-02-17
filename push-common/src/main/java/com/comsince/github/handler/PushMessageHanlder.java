@@ -3,6 +3,7 @@ package com.comsince.github.handler;
 import com.comsince.github.Header;
 import com.comsince.github.PushPacket;
 import com.comsince.github.Signal;
+import com.comsince.github.process.MessageDispatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tio.client.intf.ClientAioHandler;
@@ -11,6 +12,7 @@ import org.tio.core.GroupContext;
 import org.tio.core.exception.AioDecodeException;
 import org.tio.core.intf.Packet;
 import org.tio.server.intf.ServerAioHandler;
+import org.tio.utils.qr.scheme.MeCard;
 
 import java.nio.ByteBuffer;
 
@@ -24,7 +26,7 @@ public class PushMessageHanlder implements ServerAioHandler,ClientAioHandler {
     @Override
     public Packet decode(ByteBuffer buffer, int limit, int position, int readableLength, ChannelContext channelContext) throws AioDecodeException {
         PushPacket pushPacket = new PushPacket();
-        return pushPacket.decode(buffer,readableLength);
+        return pushPacket.decode(buffer,readableLength,channelContext);
     }
 
     /**
@@ -42,7 +44,7 @@ public class PushMessageHanlder implements ServerAioHandler,ClientAioHandler {
         PushPacket pushPacket = (PushPacket) packet;
         Signal signal = pushPacket.getHeader().getSignal();
         logger.info("receive signal ：" + signal.name());
-
+        MessageDispatcher.handleMessage(pushPacket,channelContext);
     }
 
     @Override

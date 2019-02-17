@@ -1,8 +1,12 @@
-package com.comsince.github;
+package com.comsince.github.sub;
+
+import com.comsince.github.Header;
+import com.comsince.github.PushPacket;
+import com.comsince.github.Signal;
 
 import java.nio.ByteBuffer;
 
-public class SubRequestPacket extends PushPacket{
+public class SubRequestPacket extends PushPacket {
 
     @Override
     public ByteBuffer encode() {

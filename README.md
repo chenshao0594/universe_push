@@ -60,4 +60,5 @@
 
 ## 参考项目
 * [T-io](https://github.com/tywo45/t-io)
+* [蚂蚁通信框架实践](https://mp.weixin.qq.com/s/JRsbK1Un2av9GKmJ8DK7IQ)
 
