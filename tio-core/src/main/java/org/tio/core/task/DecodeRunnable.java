@@ -113,7 +113,7 @@ public class DecodeRunnable extends AbstractQueueRunnable<ByteBuffer> {
 					try {
 						packet = groupContext.getAioHandler().decode(byteBuffer, limit, initPosition, readableLength, channelContext);
 					} catch (BufferUnderflowException e) {
-						//log.error(e.toString(), e);
+						log.error(e.toString(), e);
 						//数据不够读
 					}
 				}
