@@ -1,10 +1,14 @@
 package com.comsince.github;
 
+import com.comsince.github.context.SpringApplicationContext;
 import com.comsince.github.handler.PushConnectorHandler;
 import com.comsince.github.handler.PushMessageHanlder;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.tio.cluster.TioClusterConfig;
 import org.tio.cluster.redisson.RedissonTioClusterTopic;
 import org.tio.server.ServerGroupContext;
@@ -19,7 +23,7 @@ import java.io.IOException;
  *         Copyright (c) [2019] [Meizu.inc]
  * @Time 19-2-14 上午10:21
  **/
-public class PushServerStarter {
+public class PushServerStarter{
     //handler, 包括编码、解码、消息处理
     public static ServerAioHandler aioHandler = new PushMessageHanlder();
 
@@ -55,4 +59,5 @@ public class PushServerStarter {
         serverGroupContext.setHeartbeatTimeout(Const.TIMEOUT);
         tioServer.start(serverIp, serverPort);
     }
+
 }

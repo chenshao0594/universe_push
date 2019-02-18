@@ -16,16 +16,10 @@
 
 	<kiev:registry url="${kiev.zookeeper.url}" />
 	<kiev:application appName="${kiev.application.name}" phones="123456789"/>
-	<kiev:server syncThreadPool="1024" asyncThreadPool="1024" port="6319" />
-
-	<kiev:service ref="pushServiceImpl" id="pushService"
-				  node="/comsince/github/pushconnector" type="TCP" />
-
 	<kiev:client loadbalancer="roundrobin" timeout="3000"/>
-	<!--订阅服务 -->
-	<kiev:stub id="subService" interface="com.comsince.github.sub.SubService"  node="/comsince/github/sub" timeout="3000"/>
+	<!--推送服务 -->
+	<kiev:stub id="pushService" interface="com.comsince.github.PushService"  node="/comsince/github/pushconnector" timeout="3000"/>
 
-	<bean id="pushServerStarter" class="com.comsince.github.PushServerStarter" init-method="init"/>
 
 
 

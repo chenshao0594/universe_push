@@ -12,13 +12,18 @@
 
 	<context:component-scan base-package="com.comsince.github"/>
 
-	<kiev:registry url="zookeeper://localhost:2181?timeout=30000" />
-	<kiev:application appName="push-connector" phones="123456789"/>
-	<kiev:server syncThreadPool="1024" asyncThreadPool="1024" port="6319" />
+	<context:property-placeholder location="setting.properties"/>
 
-	<kiev:service ref="pushServiceImpl" id="pushService"
-				  node="/comsince/github/pushconnector" type="TCP" />
+	<kiev:registry url="${kiev.zookeeper.url}" />
+	<kiev:application appName="${kiev.application.name}" phones="123456789"/>
+	<kiev:server syncThreadPool="1024" asyncThreadPool="1024" port="6320" />
 
-	<bean id="pushServerStarter" class="com.comsince.github.PushServerStarter" init-method="init"/>
+	<kiev:service ref="subServiceImpl" id="subService"
+				  node="/comsince/github/sub" type="TCP" />
+
+	<bean id="snowflake" class="org.tio.utils.hutool.Snowflake">
+		<constructor-arg index="0" value="${workerId}"/>
+		<constructor-arg index="1" value="${datacenterId}"/>
+	</bean>
 
 </beans>

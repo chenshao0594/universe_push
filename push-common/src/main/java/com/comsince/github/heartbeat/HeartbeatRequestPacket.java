@@ -9,11 +9,18 @@ import java.nio.ByteBuffer;
 public class HeartbeatRequestPacket extends PushPacket {
     @Override
     public ByteBuffer encode() {
-        ByteBuffer buffer = ByteBuffer.allocate(Header.LENGTH);
+        int bodyLength = 0;
+        if(getBody() != null){
+            bodyLength = getBody().length;
+        }
+        ByteBuffer buffer = ByteBuffer.allocate(Header.LENGTH + bodyLength);
         Header header = new Header();
         header.setSignal(Signal.PING);
-        header.setLength(0);
+        header.setLength(bodyLength);
         buffer.put(header.getContents());
+        if(getBody() != null){
+            buffer.put(getBody());
+        }
         return buffer;
     }
 }

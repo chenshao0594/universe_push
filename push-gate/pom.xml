@@ -19,5 +19,12 @@
       <artifactId>tio-core</artifactId>
       <version>${project.verson}</version>
     </dependency>
+
+    <dependency>
+      <groupId>com.comsince.github</groupId>
+      <artifactId>push-common</artifactId>
+      <version>${project.verson}</version>
+    </dependency>
+
   </dependencies>
 </project>

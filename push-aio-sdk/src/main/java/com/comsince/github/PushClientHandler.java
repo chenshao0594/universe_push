@@ -21,6 +21,6 @@ public class PushClientHandler extends PushMessageHanlder {
     public void handler(Packet packet, ChannelContext channelContext) throws Exception {
         PushPacket pushPacket = (PushPacket) packet;
         Signal signal = pushPacket.getHeader().getSignal();
-        logger.info("push client receive signal ：" + signal.name()+" token "+new String(((PushPacket) packet).getBody(),"UTF-8"));
+        logger.info("push client receive signal ：" + signal.name()+" body-> "+new String(((PushPacket) packet).getBody(),"UTF-8"));
     }
 }

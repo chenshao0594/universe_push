@@ -7,12 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MessageDispatcher {
-    private static List<PushMessageProcessor> pushMessageProcessors = new ArrayList<>();
+    private static List<MessageProcessor> pushMessageProcessors = new ArrayList<>();
     static {
         pushMessageProcessors.add(new SubResponseProcessor());
+        pushMessageProcessors.add(new HeartbeatResponseProcessor());
+        pushMessageProcessors.add(new PushMessageProcessor());
     }
     public static void handleMessage(PushPacket pushPacket, ChannelContext channelContext){
-        for(PushMessageProcessor pushMessageProcessor : pushMessageProcessors){
+        for(MessageProcessor pushMessageProcessor : pushMessageProcessors){
             if(pushMessageProcessor.match(pushPacket)){
                 pushMessageProcessor.process(pushPacket,channelContext);
                 return;

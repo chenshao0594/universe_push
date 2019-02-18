@@ -19,5 +19,5 @@ public class Const {
     /**
      * 心跳超时时间
      */
-    public static final int TIMEOUT = 5000;
+    public static final int TIMEOUT = 60000;
 }
