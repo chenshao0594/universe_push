@@ -49,10 +49,10 @@ public class PushServerStarter{
      * 启动程序入口
      */
     public static void main(String[] args) throws IOException {
-        init();
+        //init();
     }
 
-    public static void init() throws IOException{
+    public void init() throws IOException{
         //RedissonClient redissonClient = Redisson.create();
         //tioClusterConfig = new TioClusterConfig(new RedissonTioClusterTopic("push-channel",redissonClient));
         //serverGroupContext.setTioClusterConfig(tioClusterConfig);

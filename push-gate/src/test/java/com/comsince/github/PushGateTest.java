@@ -21,7 +21,7 @@ public class PushGateTest{
     @Test
     public void sendMessageByIp() throws Exception {
         for(int i=0;i<10;i++){
-            pushService.pushByToken("88c667cfc16d103ac1ead60432aaee33","这时从push-gate发送的消息"+i);
+            pushService.pushByToken("e4177a965a0a88539801401b3510330e","this is from push-gate pushMessage"+i);
 
         }
     }
