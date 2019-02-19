@@ -17,7 +17,7 @@ public class HeartbeatResponseProcessor implements MessageProcessor {
     Logger logger = LoggerFactory.getLogger(HeartbeatResponseProcessor.class);
     @Override
     public void process(PushPacket pushPacket, ChannelContext channelContext) {
-        logger.info("receiver signal "+pushPacket.getHeader().getSignal());
+        logger.info("receive signal "+pushPacket.getHeader().getSignal());
         HeartbeatResponsePacket heartbeatResponsePacket = new HeartbeatResponsePacket("ping back");
         Tio.send(channelContext,heartbeatResponsePacket);
     }

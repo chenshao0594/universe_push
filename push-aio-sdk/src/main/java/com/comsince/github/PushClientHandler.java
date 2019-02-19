@@ -1,13 +1,13 @@
 package com.comsince.github;
 
-import com.comsince.github.handler.PushMessageHanlder;
+import com.comsince.github.handler.PushMessageHandler;
 import com.comsince.github.heartbeat.HeartbeatRequestPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tio.core.ChannelContext;
 import org.tio.core.intf.Packet;
 
-public class PushClientHandler extends PushMessageHanlder {
+public class PushClientHandler extends PushMessageHandler {
 
     Logger logger = LoggerFactory.getLogger(PushClientHandler.class);
 
