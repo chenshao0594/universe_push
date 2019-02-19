@@ -1,14 +1,13 @@
 package com.comsince.github.impl;
-
-import com.comsince.github.HelloPacket;
 import com.comsince.github.PushServerStarter;
 import com.comsince.github.PushService;
-import com.comsince.github.process.HeartbeatResponseProcessor;
 import com.comsince.github.pushmessage.PushMessagePacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.tio.core.Tio;
+
+import java.util.List;
 
 /**
  * @author comsicne
@@ -18,11 +17,12 @@ import org.tio.core.Tio;
 @Service
 public class PushServiceImpl implements PushService{
     Logger logger = LoggerFactory.getLogger(PushServiceImpl.class);
+
     @Override
-    public void sendSingleDeviceMessage(String ip, String message) throws Exception {
-        HelloPacket helloPacket = new HelloPacket();
-        helloPacket.setBody(message.getBytes(HelloPacket.CHARSET));
-        Tio.sendToIp(PushServerStarter.serverGroupContext,ip,helloPacket);
+    public void pushByIp(String ip, String message) {
+        logger.info("push to "+ip+" message "+message);
+        PushMessagePacket pushMessagePacket = new PushMessagePacket(message);
+        Tio.sendToIp(PushServerStarter.serverGroupContext,ip,pushMessagePacket);
     }
 
     @Override
@@ -30,5 +30,20 @@ public class PushServiceImpl implements PushService{
         logger.info("pushByToken-> "+token+" message->"+message);
         PushMessagePacket pushMessagePacket = new PushMessagePacket(message);
         Tio.sendToBsId(PushServerStarter.serverGroupContext,token,pushMessagePacket);
+    }
+
+    @Override
+    public void pushByTokens(List<String> tokens, String message) {
+       logger.info("pushByTokens-> "+tokens+" message->"+message);
+       for(String token: tokens){
+           pushByToken(token,message);
+       }
+    }
+
+    @Override
+    public void pushAll(String message) {
+        logger.info("push to all message "+message);
+        PushMessagePacket pushMessagePacket = new PushMessagePacket(message);
+        Tio.sendToAll(PushServerStarter.serverGroupContext,pushMessagePacket);
     }
 }
