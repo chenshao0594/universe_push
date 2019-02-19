@@ -29,7 +29,6 @@
         <module>push-auth</module>
         <module>push-common</module>
         <module>push-connector</module>
-        <module>push-connector-client</module>
         <module>push-gate</module>
         <module>push-api</module>
         <module>push-sub</module>
