@@ -2,13 +2,13 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>com.comsince.github</groupId>
-    <artifactId>push</artifactId>
+    <artifactId>sdk</artifactId>
     <version>1.0.0</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.comsince.github</groupId>
-  <artifactId>push-nio-sdk</artifactId>
+  <artifactId>push-aio-sdk</artifactId>
   <packaging>jar</packaging>
   <version>${project.verson}</version>
   <url>http://maven.apache.org</url>
@@ -17,6 +17,12 @@
     <dependency>
       <groupId>com.comsince.github</groupId>
       <artifactId>tio-core</artifactId>
+      <version>${project.verson}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.comsince.github</groupId>
+      <artifactId>push-sub</artifactId>
       <version>${project.verson}</version>
     </dependency>
   </dependencies>

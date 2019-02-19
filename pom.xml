@@ -32,8 +32,7 @@
         <module>push-gate</module>
         <module>push-api</module>
         <module>push-sub</module>
-        <module>push-aio-sdk</module>
-        <module>push-nio-sdk</module>
+        <module>sdk</module>
 
     </modules>
 
