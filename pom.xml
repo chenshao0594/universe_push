@@ -28,6 +28,7 @@
         <module>tio-core</module>
         <module>push-auth</module>
         <module>push-common</module>
+        <module>push-stub</module>
         <module>push-connector</module>
         <module>push-gate</module>
         <module>push-api</module>

@@ -8,7 +8,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.comsince.github</groupId>
-  <artifactId>push-common</artifactId>
+  <artifactId>push-stub</artifactId>
   <packaging>jar</packaging>
   <version>${project.verson}</version>
   <url>http://maven.apache.org</url>
@@ -17,12 +17,6 @@
     <dependency>
       <groupId>com.comsince.github</groupId>
       <artifactId>tio-core</artifactId>
-      <version>${project.verson}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.comsince.github</groupId>
-      <artifactId>push-stub</artifactId>
       <version>${project.verson}</version>
     </dependency>
 
