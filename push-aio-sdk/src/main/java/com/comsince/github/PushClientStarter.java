@@ -18,6 +18,7 @@ import org.tio.core.Tio;
 public class PushClientStarter {
     //服务器节点
     public static Node serverNode = new Node("172.16.177.107", Const.PORT);
+    //public static Node serverNode = new Node("172.16.176.25", Const.PORT);
     //public static Node serverNode = new Node(Const.SERVER, Const.PORT);
 
     //handler, 包括编码、解码、消息处理

@@ -39,4 +39,9 @@ public class PushGateTest{
         tokens.add("0c4d24f2c37bc801fd15717b010901f5");
         pushService.pushByTokens(tokens,"发送指定tokens的消息");
     }
+
+    @Test
+    public void sendByToken(){
+        pushService.pushByToken("acc415d62223749e46d5de9895946ca4","发送指定token的消息");
+    }
 }

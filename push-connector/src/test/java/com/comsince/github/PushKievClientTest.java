@@ -22,6 +22,6 @@ public class PushKievClientTest {
 
     @Test
     public void sendMessageByIp() throws Exception {
-        pushService.sendSingleDeviceMessage("127.0.0.1","这时由测试组件发送的消息");
+        pushService.pushByIp("127.0.0.1","这时由测试组件发送的消息");
     }
 }

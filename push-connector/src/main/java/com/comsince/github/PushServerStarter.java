@@ -1,13 +1,18 @@
 package com.comsince.github;
 
 import com.comsince.github.handler.PushMessageHandler;
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.SingleServerConfig;
 import org.tio.cluster.TioClusterConfig;
+import org.tio.cluster.redisson.RedissonTioClusterTopic;
 import org.tio.server.ServerGroupContext;
 import org.tio.server.TioServer;
 import org.tio.server.intf.ServerAioHandler;
 import org.tio.server.intf.ServerAioListener;
 
 import java.io.IOException;
+import org.redisson.config.Config;
 
 /**
  * @author comsicne
@@ -44,9 +49,11 @@ public class PushServerStarter{
     }
 
     public static void init() throws IOException{
-        //RedissonClient redissonClient = Redisson.create();
-        //tioClusterConfig = new TioClusterConfig(new RedissonTioClusterTopic("push-channel",redissonClient));
-        //serverGroupContext.setTioClusterConfig(tioClusterConfig);
+        Config config = new Config();
+        config.useSingleServer().setAddress("redis://172.16.42.139:7001");
+        RedissonClient redissonClient = Redisson.create(config);
+        tioClusterConfig = new TioClusterConfig(new RedissonTioClusterTopic("push-channel",redissonClient));
+        serverGroupContext.setTioClusterConfig(tioClusterConfig);
         serverGroupContext.setHeartbeatTimeout(Const.TIMEOUT);
         tioServer.start(serverIp, serverPort);
     }

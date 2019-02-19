@@ -16,7 +16,7 @@
 
 	<kiev:registry url="${kiev.zookeeper.url}" />
 	<kiev:application appName="${kiev.application.name}" phones="123456789"/>
-	<kiev:server syncThreadPool="1024" asyncThreadPool="1024" port="6319" />
+	<kiev:server syncThreadPool="1024" asyncThreadPool="1024" port="6419" />
 
 	<kiev:service ref="pushServiceImpl" id="pushService"
 				  node="/comsince/github/pushconnector" type="TCP" />
