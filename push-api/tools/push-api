@@ -1,5 +1,5 @@
 #!/bin/sh
-
+# 这里可以修改JAVA_HOME的路径
 APP_NAME=$(basename "$0")
 APP_DIR=/opt/web/${APP_NAME}
 APP_VERSION_FILE=${APP_DIR}/version
