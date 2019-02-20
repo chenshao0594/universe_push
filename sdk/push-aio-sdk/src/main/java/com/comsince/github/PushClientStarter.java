@@ -1,5 +1,6 @@
 package com.comsince.github;
 
+import com.comsince.github.heartbeat.HeartbeatRequestPacket;
 import com.comsince.github.sub.SubRequestPacket;
 import org.tio.client.ClientChannelContext;
 import org.tio.client.ClientGroupContext;
@@ -9,6 +10,8 @@ import org.tio.client.intf.ClientAioHandler;
 import org.tio.client.intf.ClientAioListener;
 import org.tio.core.Node;
 import org.tio.core.Tio;
+
+import java.util.concurrent.*;
 
 /**
  * @author comsicne
@@ -35,26 +38,56 @@ public class PushClientStarter {
     public static ClientGroupContext clientGroupContext = new ClientGroupContext(tioClientHandler, aioListener, reconnConf);
 
     public static TioClient tioClient = null;
-    public static ClientChannelContext clientChannelContext = null;
 
+    private static Executor executor = Executors.newFixedThreadPool(200, new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+            return new Thread(r,"push-client");
+        }
+    });
+
+    private static ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(20);
     /**
      * 启动程序入口
      */
     public static void main(String[] args) throws Exception {
-        clientGroupContext.setHeartbeatTimeout(Const.TIMEOUT);
-        send(serverNode0);
-        send(serverNode1);
-        send(serverNode2);
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    pressConnect();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                //send(serverNode0);
+            }
+        });
+
+    }
+
+    public static void pressConnect()throws Exception{
+        for(int i = 0; i<1500; i++){
+            send(serverNode1);
+            send(serverNode2);
+            send(serverNode0);
+        }
     }
 
     public static void send(Node node) throws Exception{
+        clientGroupContext.setHeartbeatTimeout(0);
         tioClient = new TioClient(clientGroupContext);
-        clientChannelContext = tioClient.connect(node);
-        send();
+        ClientChannelContext channelContext = tioClient.connect(node);
+        send(channelContext);
+        scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                Tio.send(channelContext, new HeartbeatRequestPacket());
+            }
+        },10*1000, 30*1000, TimeUnit.MILLISECONDS);
     }
 
-    private static void send() throws Exception {
+    private static void send(ClientChannelContext channelContext) throws Exception {
         SubRequestPacket subRequestPacket = new SubRequestPacket();
-        Tio.send(clientChannelContext, subRequestPacket);
+        Tio.send(channelContext, subRequestPacket);
     }
 }
