@@ -15,12 +15,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.comsince.github</groupId>
-      <artifactId>tio-core</artifactId>
-      <version>${project.verson}</version>
-    </dependency>
-
-    <dependency>
       <groupId>com.meizu.kiev</groupId>
       <artifactId>meizu-kiev</artifactId>
       <version>2.2.2-RC05</version>
@@ -30,34 +24,10 @@
           <artifactId>spring-asm</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>com.alibaba</groupId>
-          <artifactId>fastjson</artifactId>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-
-    <!--spring 相关 -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.redisson</groupId>
-      <artifactId>redisson</artifactId>
-      <version>3.10.2</version>
     </dependency>
   </dependencies>
 

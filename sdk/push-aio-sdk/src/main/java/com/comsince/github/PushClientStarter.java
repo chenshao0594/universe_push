@@ -17,10 +17,10 @@ import org.tio.core.Tio;
  **/
 public class PushClientStarter {
     //服务器节点
-    //public static Node serverNode = new Node("172.16.177.107", Const.PORT);
-    public static Node serverNode = new Node("172.16.176.23", Const.PORT);
-    //public static Node serverNode = new Node("172.16.176.25", Const.PORT);
-    //public static Node serverNode = new Node(Const.SERVER, Const.PORT);
+    public static Node serverNode2 = new Node("172.16.177.107", Const.PORT);
+    public static Node serverNode1 = new Node("172.16.176.23", Const.PORT);
+    public static Node serverNode0 = new Node("172.16.176.25", Const.PORT);
+    public static Node serverNode = new Node(Const.SERVER, Const.PORT);
 
     //handler, 包括编码、解码、消息处理
     public static ClientAioHandler tioClientHandler = new PushClientHandler();
@@ -42,9 +42,14 @@ public class PushClientStarter {
      */
     public static void main(String[] args) throws Exception {
         clientGroupContext.setHeartbeatTimeout(Const.TIMEOUT);
+        send(serverNode0);
+        send(serverNode1);
+        send(serverNode2);
+    }
+
+    public static void send(Node node) throws Exception{
         tioClient = new TioClient(clientGroupContext);
-        clientChannelContext = tioClient.connect(serverNode);
-        //连上后，发条消息玩玩
+        clientChannelContext = tioClient.connect(node);
         send();
     }
 
