@@ -1,12 +1,7 @@
-# 订阅服务
-设备接入原则上是不需要任何参数的，但是为了以后能够迅速找到与该设备对应的channel通道，需要一个唯一的链接标识用于标识这个链接。
+# 推送sdk nio版本
 
-# 订阅协议说明
+本工程采用原生的java nio开发，便于Android 设备接入
 
-* 请求消息体为空
 
-* 响应格式
-
-```json
-{"status":200,"token":"服务端返回的推送token，全局唯一，标识用户的唯一链接"}
-```
+## 参考资料
+* [AndroidAsync](https://github.com/koush/AndroidAsync/tree/master/AndroidAsync/src/com/koushikdutta/async)

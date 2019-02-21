@@ -11,6 +11,7 @@ import org.tio.client.intf.ClientAioListener;
 import org.tio.core.Node;
 import org.tio.core.Tio;
 
+import java.util.Random;
 import java.util.concurrent.*;
 
 /**
@@ -78,12 +79,13 @@ public class PushClientStarter {
         tioClient = new TioClient(clientGroupContext);
         ClientChannelContext channelContext = tioClient.connect(node);
         send(channelContext);
+        Random random = new Random();
         scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 Tio.send(channelContext, new HeartbeatRequestPacket());
             }
-        },10*1000, 30*1000, TimeUnit.MILLISECONDS);
+        },10*1000, (random.nextInt(30) + 30) * 1000, TimeUnit.MILLISECONDS);
     }
 
     private static void send(ClientChannelContext channelContext) throws Exception {
