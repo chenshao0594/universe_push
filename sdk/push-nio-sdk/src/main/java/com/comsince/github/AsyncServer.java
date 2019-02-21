@@ -618,7 +618,7 @@ public class AsyncServer {
                 runLoop(server, selector, queue);
             }
             catch (AsyncSelectorException e) {
-                log.e(LOGTAG, "Selector exception, shutting down", e);
+                log.e("Selector exception, shutting down"+ e.getMessage());
                 try {
                     // StreamUtility.closeQuiety is throwing ArrayStoreException?
                     selector.getSelector().close();
@@ -627,23 +627,23 @@ public class AsyncServer {
                 }
             }
             // see if we keep looping, this must be in a synchronized block since the queue is accessed.
-            synchronized (server) {
-                if (selector.isOpen() && (selector.keys().size() > 0 || queue.size() > 0))
-                    continue;
-
-                shutdownEverything(selector);
-                if (server.mSelector == selector) {
-                    server.mQueue = new PriorityQueue<Scheduled>(1, Scheduler.INSTANCE);
-                    server.mSelector = null;
-                    server.mAffinity = null;
-                }
-                break;
-            }
+//            synchronized (server) {
+//                if (selector.isOpen() && (selector.keys().size() > 0 || queue.size() > 0))
+//                    continue;
+//
+//                shutdownEverything(selector);
+//                if (server.mSelector == selector) {
+//                    server.mQueue = new PriorityQueue<Scheduled>(1, Scheduler.INSTANCE);
+//                    server.mSelector = null;
+//                    server.mAffinity = null;
+//                }
+//                break;
+//            }
         }
-        synchronized (mServers) {
-            mServers.remove(Thread.currentThread());
-        }
-        log.i(LOGTAG, "****AsyncServer has shut down.****");
+//        synchronized (mServers) {
+//            mServers.remove(Thread.currentThread());
+//        }
+//        log.e("****AsyncServer has shut down.****");
     }
 
     private static void shutdownKeys(SelectorWrapper selector) {
@@ -717,22 +717,22 @@ public class AsyncServer {
         // run the queue to populate the selector with keys
         long wait = lockAndRunQueue(server, queue);
         try {
-            synchronized (server) {
-                // select now to see if anything is ready immediately. this
-                // also clears the canceled key queue.
-                int readyNow = selector.selectNow();
-                if (readyNow == 0) {
-                    // if there is nothing to select now, make sure we don't have an empty key set
-                    // which means it would be time to turn this thread off.
-                    if (selector.keys().size() == 0 && wait == QUEUE_EMPTY) {
-//                    Log.i(LOGTAG, "Shutting down. keys: " + selector.keys().size() + " keepRunning: " + keepRunning);
-                        return;
-                    }
-                }
-                else {
-                    needsSelect = false;
-                }
-            }
+//            synchronized (server) {
+//                // select now to see if anything is ready immediately. this
+//                // also clears the canceled key queue.
+//                int readyNow = selector.selectNow();
+//                if (readyNow == 0) {
+//                    // if there is nothing to select now, make sure we don't have an empty key set
+//                    // which means it would be time to turn this thread off.
+//                    if (selector.keys().size() == 0 && wait == QUEUE_EMPTY) {
+//                    log.i("Shutting down. keys: " + selector.keys().size());
+//                        return;
+//                    }
+//                }
+//                else {
+//                    needsSelect = false;
+//                }
+//            }
 
             if (needsSelect) {
                 if (wait == QUEUE_EMPTY) {
@@ -788,6 +788,7 @@ public class AsyncServer {
                 else if (key.isConnectable()) {
                     ConnectFuture cancel = (ConnectFuture) key.attachment();
                     SocketChannel sc = (SocketChannel) key.channel();
+                    sc.setOption(StandardSocketOptions.SO_KEEPALIVE,true);
                     key.interestOps(SelectionKey.OP_READ);
                     AsyncNetworkSocket newHandler;
                     try {
@@ -818,6 +819,9 @@ public class AsyncServer {
                 }
             }
             catch (CancelledKeyException ex) {
+
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         readyKeys.clear();
