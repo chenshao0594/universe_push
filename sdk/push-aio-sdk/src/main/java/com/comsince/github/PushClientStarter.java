@@ -67,10 +67,11 @@ public class PushClientStarter {
     }
 
     public static void pressConnect()throws Exception{
-        for(int i = 0; i<1500; i++){
-            send(serverNode1);
-            send(serverNode2);
-            send(serverNode0);
+        for(int i = 0; i<1; i++){
+            //send(serverNode1);
+            //send(serverNode2);
+            //send(serverNode0);
+            send(serverNode);
         }
     }
 
@@ -85,7 +86,7 @@ public class PushClientStarter {
             public void run() {
                 Tio.send(channelContext, new HeartbeatRequestPacket());
             }
-        },10*1000, (random.nextInt(30) + 30) * 1000, TimeUnit.MILLISECONDS);
+        },10*1000, (random.nextInt(60) + 180) * 1000, TimeUnit.MILLISECONDS);
     }
 
     private static void send(ClientChannelContext channelContext) throws Exception {
