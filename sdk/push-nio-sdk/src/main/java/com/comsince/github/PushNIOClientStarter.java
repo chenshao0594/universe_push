@@ -16,14 +16,11 @@ public class PushNIOClientStarter {
     public static void main(String[] args){
         for(int i=0;i<1;i++){
             sendConnect("172.16.177.107",6789);
-            //("172.16.176.23",6789);
-            //sendConnect("172.16.176.25",6789);
+            sendConnect("172.16.176.23",6789);
+            sendConnect("172.16.176.25",6789);
         }
 
     }
-
-
-
 
     public static void sendConnect(String host, int port){
         NIOClient nioClient = new NIOClient(host,port);

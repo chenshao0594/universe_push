@@ -50,7 +50,7 @@ public class PushServerStarter{
 
     public static void init() throws IOException{
         Config config = new Config();
-        config.useSingleServer().setAddress("redis://172.16.42.139:7001");
+        config.useSingleServer().setAddress("redis://172.16.46.213:7001");
         RedissonClient redissonClient = Redisson.create(config);
         tioClusterConfig = new TioClusterConfig(new RedissonTioClusterTopic("push-channel",redissonClient));
         serverGroupContext.setTioClusterConfig(tioClusterConfig);

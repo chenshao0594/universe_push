@@ -10,8 +10,11 @@ import com.comsince.github.push.Signal;
 import com.comsince.github.logger.LoggerFactory;
 
 import java.nio.charset.Charset;
+import java.util.Random;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback {
     Log log = LoggerFactory.getLogger(NIOClient.class);
@@ -53,6 +56,10 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
 
     @Override
     public void onConnectCompleted(Exception ex, AsyncSocket socket) {
+        if(ex != null){
+            log.i("connect failed");
+            return;
+        }
         this.asyncSocket = socket;
 
         asyncSocket.setDataCallback(this);
@@ -60,21 +67,21 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
         asyncSocket.setClosedCallback(this);
 
 
-//                scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        log.i("send heartbeat");
-//                        Header header = new Header();
-//                        header.setSignal(Signal.PING);
-//                        byte[] sendByte = header.getContents();
-//                        Util.writeAll(asyncSocket, sendByte, new CompletedCallback() {
-//                            @Override
-//                            public void onCompleted(Exception ex) {
-//                                log.i("send heartbeat onCompleted");
-//                            }
-//                        });
-//                    }
-//                },500,(new Random().nextInt(30) +30) * 1000, TimeUnit.MILLISECONDS);
+                scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+                    @Override
+                    public void run() {
+                        log.i("send heartbeat");
+                        Header header = new Header();
+                        header.setSignal(Signal.PING);
+                        byte[] sendByte = header.getContents();
+                        Util.writeAll(asyncSocket, sendByte, new CompletedCallback() {
+                            @Override
+                            public void onCompleted(Exception ex) {
+                                log.i("send heartbeat onCompleted");
+                            }
+                        });
+                    }
+                },500,(new Random().nextInt(120) +30) * 1000, TimeUnit.MILLISECONDS);
 
         sub();
 
@@ -102,8 +109,13 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
         if(ex != null){
             ex.printStackTrace();
         }
-        log.i("reconnect");
         //retry
-        asyncServer.connectSocket(host,port,this);
+        scheduledExecutorService.schedule(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                return asyncServer.connectSocket(host,port,NIOClient.this);
+            }
+        },5, TimeUnit.SECONDS);
+
     }
 }

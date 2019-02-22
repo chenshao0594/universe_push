@@ -1,5 +1,8 @@
 package com.comsince.github.core;
 
+import com.comsince.github.logger.Log;
+import com.comsince.github.logger.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
@@ -8,6 +11,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 
 class SocketChannelWrapper extends ChannelWrapper {
+    Log log = LoggerFactory.getLogger(SocketChannelWrapper.class);
     SocketChannel mChannel;
 
     @Override
@@ -21,6 +25,7 @@ class SocketChannelWrapper extends ChannelWrapper {
     }
     @Override
     public int read(ByteBuffer buffer) throws IOException {
+        log.i("read from server:"+mChannel.getRemoteAddress()+","+"client:"+mChannel.getLocalAddress());
         return mChannel.read(buffer);
     }
     @Override
