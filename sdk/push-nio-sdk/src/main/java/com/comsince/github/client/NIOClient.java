@@ -4,6 +4,7 @@ import com.comsince.github.core.*;
 import com.comsince.github.core.callback.CompletedCallback;
 import com.comsince.github.core.callback.ConnectCallback;
 import com.comsince.github.core.callback.DataCallback;
+import com.comsince.github.core.future.Cancellable;
 import com.comsince.github.logger.Log;
 import com.comsince.github.push.Header;
 import com.comsince.github.push.Signal;
@@ -22,6 +23,7 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
     private AsyncSocket asyncSocket;
     private String host;
     private int port;
+    private int interval = 30;
 
     ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 
@@ -58,43 +60,53 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
         Util.writeAll(asyncSocket, header.getContents(), new CompletedCallback() {
             @Override
             public void onCompleted(Exception ex) {
-                log.i("send sub signal success");
+                if(ex != null){
+                    log.i(ex.getCause().getMessage());
+                }
             }
         });
+    }
 
+    private void heart(){
+        Header header = new Header();
+        header.setSignal(Signal.PING);
+        byte[] sendByte = header.getContents();
+        Util.writeAll(asyncSocket, sendByte, new CompletedCallback() {
+            @Override
+            public void onCompleted(Exception ex) {
+                if(ex != null){
+                    log.e(ex.getCause().getMessage());
+                    return;
+                }
+                interval = interval + 30;
+                log.i("start heartbeat after "+interval);
+            }
+        });
     }
 
     @Override
     public void onConnectCompleted(Exception ex, AsyncSocket socket) {
         if(ex != null){
             log.i("connect failed");
+            interval = 30;
+            reconnect();
             return;
         }
 
         isConnected = true;
-
         this.asyncSocket = socket;
-
         asyncSocket.setDataCallback(this);
-
         asyncSocket.setClosedCallback(this);
 
+        scheduledExecutorService.schedule(new Runnable() {
+            @Override
+            public void run() {
+                heart();
 
-                scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
-                    @Override
-                    public void run() {
-                        log.i("send heartbeat");
-                        Header header = new Header();
-                        header.setSignal(Signal.PING);
-                        byte[] sendByte = header.getContents();
-                        Util.writeAll(asyncSocket, sendByte, new CompletedCallback() {
-                            @Override
-                            public void onCompleted(Exception ex) {
-                                log.i("send heartbeat onCompleted");
-                            }
-                        });
-                    }
-                },500,(new Random().nextInt(120) +30) * 1000, TimeUnit.MILLISECONDS);
+                scheduledExecutorService.schedule(this,interval,TimeUnit.SECONDS);
+            }
+        },interval,TimeUnit.SECONDS);
+
 
         sub();
 
@@ -125,15 +137,19 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
     public void onCompleted(Exception ex) {
         if(ex != null){
             ex.printStackTrace();
+            interval = 30;
             isConnected = false;
         }
         //retry
+        reconnect();
+    }
+
+    private void reconnect() {
         scheduledExecutorService.schedule(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
                 return asyncServer.connectSocket(host,port,NIOClient.this);
             }
         },5, TimeUnit.SECONDS);
-
     }
 }

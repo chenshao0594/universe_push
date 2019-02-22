@@ -789,7 +789,6 @@ public class AsyncServer {
                 else if (key.isConnectable()) {
                     ConnectFuture cancel = (ConnectFuture) key.attachment();
                     SocketChannel sc = (SocketChannel) key.channel();
-                    sc.setOption(StandardSocketOptions.SO_KEEPALIVE,true);
                     key.interestOps(SelectionKey.OP_READ);
                     AsyncNetworkSocket newHandler;
                     try {
@@ -821,8 +820,6 @@ public class AsyncServer {
             }
             catch (CancelledKeyException ex) {
 
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
         readyKeys.clear();
