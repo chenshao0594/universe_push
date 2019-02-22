@@ -26,8 +26,16 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
     ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 
 
+    volatile boolean isConnected = false;
+
     Header receiveHeader = null;
     ByteBufferList receiveBuffer = new ByteBufferList();
+
+    private PushMessageCallback pushMessageCallback;
+
+    public void setPushMessageCallback(PushMessageCallback pushMessageCallback){
+        this.pushMessageCallback = pushMessageCallback;
+    }
 
     public NIOClient(String host, int port) {
         this.host = host;
@@ -36,7 +44,9 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
     }
 
     public void connect(){
-        asyncServer.connectSocket(host,port,this);
+        if(!isConnected){
+            asyncServer.connectSocket(host,port,this);
+        }
     }
 
     private void sub(){
@@ -60,6 +70,9 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
             log.i("connect failed");
             return;
         }
+
+        isConnected = true;
+
         this.asyncSocket = socket;
 
         asyncSocket.setDataCallback(this);
@@ -100,7 +113,11 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
         bb.get(receiveBuffer,reallyRead);
 
         if(receiveBuffer.remaining() == bodyLength){
-            log.i("receive body-> "+receiveBuffer.readString(Charset.forName("UTF-8")));
+            String message = receiveBuffer.readString(Charset.forName("UTF-8"));
+            log.i("receive body-> "+message);
+            if(pushMessageCallback != null){
+                pushMessageCallback.receiveMessage(message);
+            }
         }
     }
 
@@ -108,6 +125,7 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
     public void onCompleted(Exception ex) {
         if(ex != null){
             ex.printStackTrace();
+            isConnected = false;
         }
         //retry
         scheduledExecutorService.schedule(new Callable<Object>() {

@@ -1,8 +1,5 @@
 package com.comsince.github.core;
 
-
-import org.apache.commons.io.Charsets;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -366,7 +363,7 @@ public class ByteBufferList {
     // not doing toString as this is really nasty in the debugger...
     public String peekString(Charset charset) {
         if (charset == null)
-            charset = Charsets.US_ASCII;
+            charset = Charset.forName("UTF-8");
         StringBuilder builder = new StringBuilder();
         for (ByteBuffer bb: mBuffers) {
             byte[] bytes;
