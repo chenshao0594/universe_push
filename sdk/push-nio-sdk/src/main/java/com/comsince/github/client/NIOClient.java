@@ -82,7 +82,7 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
             @Override
             public void onCompleted(Exception ex) {
                 if(ex != null){
-                    log.e(ex.getCause().getMessage());
+                    log.e("heart","send message",ex);
                     return;
                 }
             }
@@ -107,15 +107,8 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
         asyncSocket.setDataCallback(this);
         asyncSocket.setClosedCallback(this);
 
-        asyncServer.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                heart();
-                asyncServer.postDelayed(this,interval);
-            }
-        },interval);
-
         sub();
+        scheduleHeartbeat();
 
     }
 
@@ -140,6 +133,7 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
                     interval = 5 * 60 * 1000;
                 }
                 message = message + " next interval "+interval/1000 +" seconds";
+                scheduleHeartbeat();
             }
             String logMessage = "receive signal ["+receiveHeader.getSignal()+"] body-> "+message;
             log.i(logMessage);
@@ -176,6 +170,14 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
         } else {
             log.i("reconnect reach max time");
         }
+    }
 
+    private void scheduleHeartbeat(){
+        asyncServer.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                heart();
+            }
+        },interval);
     }
 }
