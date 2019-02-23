@@ -10,6 +10,8 @@ public interface Log {
 
     public void i(String message);
 
+    public void e(String message,Exception e);
+
     public void e(String tag,String message,Exception e);
 
     public void e(String message);

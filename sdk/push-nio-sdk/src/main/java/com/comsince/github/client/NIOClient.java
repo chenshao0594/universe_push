@@ -91,8 +91,11 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
 
     @Override
     public void onConnectCompleted(Exception ex, AsyncSocket socket) {
+        if(pushMessageCallback != null){
+            pushMessageCallback.receiveException(ex);
+        }
         if(ex != null){
-            log.i("connect failed");
+            log.e("connect failed",ex);
             interval = initInterval;
             reconnect();
             return;
@@ -129,23 +132,31 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
 
         if(receiveBuffer.remaining() == bodyLength){
             String message = receiveBuffer.readString(Charset.forName("UTF-8"));
-            log.i("receive signal ["+receiveHeader.getSignal()+"] body-> "+message);
+
+            if(receiveHeader.getSignal() == Signal.PING){
+                heartNum++;
+                interval = interval + 30 * 1000 * heartNum;
+                if(interval > 5 * 60 * 1000){
+                    interval = 5 * 60 * 1000;
+                }
+                message = message + " next interval "+interval/1000 +" seconds";
+            }
+            String logMessage = "receive signal ["+receiveHeader.getSignal()+"] body-> "+message;
+            log.i(logMessage);
             if(pushMessageCallback != null){
-                pushMessageCallback.receiveMessage(message);
+                pushMessageCallback.receiveMessage(receiveHeader.getSignal(),message);
             }
         }
 
-        if(receiveHeader.getSignal() == Signal.PING){
-            heartNum++;
-            interval = interval + 30 * 1000 * heartNum;
-            log.i("next heartbeat interval is "+interval/1000 +" seconds");
-        }
     }
 
     @Override
     public void onCompleted(Exception ex) {
+        if(pushMessageCallback != null){
+            pushMessageCallback.receiveException(ex);
+        }
         if(ex != null) {
-            log.e("onCompleted "+ex.getCause().getMessage());
+            log.e("onCompleted ",ex);
         }
         interval = initInterval;
         heartNum = 1;

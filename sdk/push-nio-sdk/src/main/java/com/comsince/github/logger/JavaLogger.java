@@ -1,7 +1,4 @@
 package com.comsince.github.logger;
-
-import com.comsince.github.logger.Log;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -32,12 +29,41 @@ public class JavaLogger implements Log {
     }
 
     @Override
+    public void e(String message, Exception e) {
+        System.err.println("["+Thread.currentThread().getName()+"]"+" ["+dateFormat.format(new Date())+"] "+"["+loggerClass.getSimpleName()+"] "+"message: "+message+" "+(e != null ? getStackMsg(e):""));
+    }
+
+    @Override
     public void e(String tag, String message, Exception e) {
-        System.err.println("["+Thread.currentThread().getName()+"]"+" ["+dateFormat.format(new Date())+"] "+"["+loggerClass.getSimpleName()+"] "+"message: "+message+" "+e.getCause().getMessage());
+        System.err.println("["+tag+"]"+"["+Thread.currentThread().getName()+"]"+" ["+dateFormat.format(new Date())+"] "+"["+loggerClass.getSimpleName()+"] "+"message: "+message+" "+(e != null ? getStackMsg(e):""));
     }
 
     @Override
     public void e(String message) {
         System.err.println("["+Thread.currentThread().getName()+"]"+" ["+dateFormat.format(new Date())+"] "+"["+loggerClass.getSimpleName()+"] "+"message: "+message);
     }
+
+
+    public static String getStackMsg(Exception e) {
+
+        StringBuffer sb = new StringBuffer();
+        StackTraceElement[] stackArray = e.getStackTrace();
+        for (int i = 0; i < stackArray.length; i++) {
+            StackTraceElement element = stackArray[i];
+            sb.append(element.toString() + "\n");
+        }
+        return sb.toString();
+    }
+
+    public static String getStackMsg(Throwable e) {
+
+        StringBuffer sb = new StringBuffer();
+        StackTraceElement[] stackArray = e.getStackTrace();
+        for (int i = 0; i < stackArray.length; i++) {
+            StackTraceElement element = stackArray[i];
+            sb.append(element.toString() + "\n");
+        }
+        return sb.toString();
+    }
+
 }
