@@ -33,11 +33,11 @@ public class JavaLogger implements Log {
 
     @Override
     public void e(String tag, String message, Exception e) {
-        System.err.println("["+Thread.currentThread().getName()+"]"+" ["+dateFormat.format(new Date())+"] "+"["+loggerClass.getSimpleName()+"] "+" message: "+message+" "+e.getCause().getMessage());
+        System.err.println("["+Thread.currentThread().getName()+"]"+" ["+dateFormat.format(new Date())+"] "+"["+loggerClass.getSimpleName()+"] "+"message: "+message+" "+e.getCause().getMessage());
     }
 
     @Override
     public void e(String message) {
-        System.err.println("["+Thread.currentThread().getName()+"]"+" ["+dateFormat.format(new Date())+"] "+"["+loggerClass.getSimpleName()+"] "+" message: "+message);
+        System.err.println("["+Thread.currentThread().getName()+"]"+" ["+dateFormat.format(new Date())+"] "+"["+loggerClass.getSimpleName()+"] "+"message: "+message);
     }
 }

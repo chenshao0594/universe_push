@@ -23,10 +23,11 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
     private AsyncSocket asyncSocket;
     private String host;
     private int port;
-    private int interval = 30;
-
-    ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-
+    private static final int initInterval = 30 * 1000;
+    private int interval = initInterval;
+    private int heartNum = 1;
+    private int reconnectNum = 0;
+    private Cancellable cancellable;
 
     volatile boolean isConnected = false;
 
@@ -47,7 +48,13 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
 
     public void connect(){
         if(!isConnected){
-            asyncServer.connectSocket(host,port,this);
+            cancellable = asyncServer.connectSocket(host,port,this);
+        }
+    }
+
+    public void close(){
+        if(cancellable != null){
+            cancellable.cancel();
         }
     }
 
@@ -78,8 +85,6 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
                     log.e(ex.getCause().getMessage());
                     return;
                 }
-                interval = interval + 30;
-                log.i("start heartbeat after "+interval);
             }
         });
     }
@@ -88,25 +93,24 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
     public void onConnectCompleted(Exception ex, AsyncSocket socket) {
         if(ex != null){
             log.i("connect failed");
-            interval = 30;
+            interval = initInterval;
             reconnect();
             return;
         }
 
         isConnected = true;
+        reconnectNum = 0;
         this.asyncSocket = socket;
         asyncSocket.setDataCallback(this);
         asyncSocket.setClosedCallback(this);
 
-        scheduledExecutorService.schedule(new Runnable() {
+        asyncServer.postDelayed(new Runnable() {
             @Override
             public void run() {
                 heart();
-
-                scheduledExecutorService.schedule(this,interval,TimeUnit.SECONDS);
+                asyncServer.postDelayed(this,interval);
             }
-        },interval,TimeUnit.SECONDS);
-
+        },interval);
 
         sub();
 
@@ -117,7 +121,6 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
         if(receiveBuffer.remaining() == 0){
             ByteBufferList headerBuffer = bb.get(Header.LENGTH);
             receiveHeader = new Header(headerBuffer.getAll());
-            log.i("receive signal "+receiveHeader.getSignal());
         }
         int bodyLength = receiveHeader.getLength();
         int read = bodyLength - receiveBuffer.remaining();
@@ -126,30 +129,42 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
 
         if(receiveBuffer.remaining() == bodyLength){
             String message = receiveBuffer.readString(Charset.forName("UTF-8"));
-            log.i("receive body-> "+message);
+            log.i("receive signal ["+receiveHeader.getSignal()+"] body-> "+message);
             if(pushMessageCallback != null){
                 pushMessageCallback.receiveMessage(message);
             }
+        }
+
+        if(receiveHeader.getSignal() == Signal.PING){
+            heartNum++;
+            interval = interval + 30 * 1000 * heartNum;
+            log.i("next heartbeat interval is "+interval/1000 +" seconds");
         }
     }
 
     @Override
     public void onCompleted(Exception ex) {
-        if(ex != null){
-            ex.printStackTrace();
-            interval = 30;
-            isConnected = false;
+        if(ex != null) {
+            log.e("onCompleted "+ex.getCause().getMessage());
         }
-        //retry
+        interval = initInterval;
+        heartNum = 1;
+        isConnected = false;
         reconnect();
     }
 
     private void reconnect() {
-        scheduledExecutorService.schedule(new Callable<Object>() {
-            @Override
-            public Object call() throws Exception {
-                return asyncServer.connectSocket(host,port,NIOClient.this);
-            }
-        },5, TimeUnit.SECONDS);
+        reconnectNum ++;
+        if(reconnectNum < 5){
+            asyncServer.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    asyncServer.connectSocket(host,port,NIOClient.this);
+                }
+            },10 * 1000);
+        } else {
+            log.i("reconnect reach max time");
+        }
+
     }
 }
