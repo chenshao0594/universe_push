@@ -19,7 +19,7 @@ import com.meizu.cloud.pushinternal.DebugLogger;
  */
 public class ForegroundService extends Service implements PushMessageCallback {
 
-    public static int FOREGROUND_SERVICE = 101;
+    public static int FOREGROUND_SERVICE = 102;
     public static String START_FOREGROUD_SERVICE = "start_foreground_service";
 
     // Unique Identification Number for the Notification.
