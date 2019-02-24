@@ -67,34 +67,31 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
         Util.writeAll(asyncSocket, header.getContents(), new CompletedCallback() {
             @Override
             public void onCompleted(Exception ex) {
-                if(ex != null){
-                    log.i(ex.getCause().getMessage());
-                }
+                log.e("write completed",ex);
             }
         });
     }
 
     private void heart(){
+        log.i("send heartbeat");
         Header header = new Header();
         header.setSignal(Signal.PING);
         byte[] sendByte = header.getContents();
         Util.writeAll(asyncSocket, sendByte, new CompletedCallback() {
             @Override
             public void onCompleted(Exception ex) {
-                if(ex != null){
-                    log.e("heart","send message",ex);
-                    return;
-                }
+                log.e("send heartbeat completed",ex);
             }
         });
     }
 
     @Override
     public void onConnectCompleted(Exception ex, AsyncSocket socket) {
-        if(pushMessageCallback != null){
-            pushMessageCallback.receiveException(ex);
-        }
+        //ex为空，表示链接正常
         if(ex != null){
+            if(pushMessageCallback != null){
+                pushMessageCallback.receiveException(ex);
+            }
             log.e("connect failed",ex);
             interval = initInterval;
             reconnect();
@@ -160,11 +157,14 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
 
     private void reconnect() {
         reconnectNum ++;
+        log.i("reconnect start num "+reconnectNum);
         if(reconnectNum < 5){
             asyncServer.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    asyncServer.connectSocket(host,port,NIOClient.this);
+                    if(!isConnected){
+                        asyncServer.connectSocket(host,port,NIOClient.this);
+                    }
                 }
             },10 * 1000);
         } else {
