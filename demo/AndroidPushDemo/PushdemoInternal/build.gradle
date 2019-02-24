@@ -1,0 +1,43 @@
+apply plugin: 'com.android.application'
+
+android {
+    signingConfigs {
+        config {
+            keyAlias 'meizupush'
+            keyPassword '123456'
+            storeFile file('../meizupushdemo.jks')
+            storePassword '123456'
+        }
+    }
+    compileSdkVersion 26
+    buildToolsVersion '25.0.0'
+    defaultConfig {
+        applicationId "com.comsince.github"
+        minSdkVersion 16
+        targetSdkVersion 26
+        versionCode 381
+        versionName "3.8.1"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/maven/com.comsince.github/push-nio-sdk/pom.properties'
+        exclude 'META-INF/maven/com.comsince.github/push-nio-sdk/pom.xml'
+    }
+}
+
+
+dependencies {
+   // compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile(name:'push-nio-sdk-1.0.0-SNAPSHOT',ext: 'jar')
+    compile(group: 'com.meizu.flyme.internet', name: 'push-internal', version: '3.8.1', ext: 'aar')
+    compile 'com.android.support:appcompat-v7:22.2.0'
+}
+
+
