@@ -9,6 +9,7 @@ import com.comsince.github.sub.SubService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tio.core.ChannelContext;
+import org.tio.core.DefaultTioUuid;
 import org.tio.core.Tio;
 
 public class SubResponseProcessor implements MessageProcessor {
@@ -18,7 +19,13 @@ public class SubResponseProcessor implements MessageProcessor {
         SubResponse subResponse = new SubResponse();
         subResponse.setStatus(200);
         SubService subService = (SubService) SpringApplicationContext.getBean("subService");
-        String token = subService.generateToken();
+        String token;
+        if(subService == null){
+            token = new DefaultTioUuid().uuid();
+        } else {
+            token = subService.generateToken();
+        }
+
         subResponse.setToken(token);
         logger.info("receive signal "+pushPacket.getHeader().getSignal()+" generate token "+token);
 

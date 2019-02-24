@@ -14,12 +14,17 @@ import org.springframework.stereotype.Component;
  **/
 @Component
 public class SpringApplicationContext implements ApplicationContextAware{
-    Logger logger = LoggerFactory.getLogger(SpringApplicationContext.class);
+    static Logger logger = LoggerFactory.getLogger(SpringApplicationContext.class);
     public static ApplicationContext pushApplicationContext = null;
 
     public static Object getBean(String name){
         if(pushApplicationContext != null){
-            return pushApplicationContext.getBean(name);
+            try {
+                return pushApplicationContext.getBean(name);
+            }catch (Exception e){
+                logger.error("getbean",e);
+                return null;
+            }
         } else {
             return null;
         }
