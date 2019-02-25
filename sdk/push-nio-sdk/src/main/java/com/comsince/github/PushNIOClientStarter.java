@@ -1,5 +1,4 @@
 package com.comsince.github;
-import com.comsince.github.client.PushMessageCallback;
 import com.comsince.github.logger.Log;
 import com.comsince.github.client.NIOClient;
 import com.comsince.github.logger.LoggerFactory;
@@ -16,10 +15,10 @@ public class PushNIOClientStarter {
 
     public static void main(String[] args){
         for(int i=0;i<1;i++){
-//            sendConnect("172.16.177.107",6789);
-//            sendConnect("172.16.176.23",6789);
-//            sendConnect("172.16.176.25",6789);
-            sendConnect("127.0.0.1",6789);
+            sendConnect("172.16.177.107",6789);
+            sendConnect("172.16.176.23",6789);
+            sendConnect("172.16.176.25",6789);
+            //sendConnect("127.0.0.1",6789);
         }
 
     }
