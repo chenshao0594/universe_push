@@ -1,9 +1,9 @@
 package com.comsince.github;
 
+import com.comsince.github.handler.PushConnectorListener;
 import com.comsince.github.handler.PushMessageHandler;
-import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
-import org.redisson.config.SingleServerConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.tio.cluster.TioClusterConfig;
 import org.tio.cluster.redisson.RedissonTioClusterTopic;
 import org.tio.server.ServerGroupContext;
@@ -20,11 +20,14 @@ import org.redisson.config.Config;
  * @Time 19-2-14 上午10:21
  **/
 public class PushServerStarter{
+    @Autowired
+    private RedissonClient redissonClient;
+
     //handler, 包括编码、解码、消息处理
     public static ServerAioHandler aioHandler = new PushMessageHandler();
 
     //事件监听器，可以为null，但建议自己实现该接口，可以参考showcase了解些接口
-    public static ServerAioListener aioListener = null;
+    public static ServerAioListener aioListener = new PushConnectorListener();
 
     //一组连接共用的上下文对象
     public static ServerGroupContext serverGroupContext = new ServerGroupContext("push-conector-tio-server", aioHandler, aioListener);
@@ -41,17 +44,10 @@ public class PushServerStarter{
     //集群配置
     public static TioClusterConfig tioClusterConfig;
 
-    /**
-     * 启动程序入口
-     */
-    public static void main(String[] args) throws IOException {
-        init();
-    }
 
-    public static void init() throws IOException{
+    public void init() throws IOException{
         Config config = new Config();
         config.useSingleServer().setAddress("redis://172.16.46.213:7001");
-        RedissonClient redissonClient = Redisson.create(config);
         tioClusterConfig = new TioClusterConfig(new RedissonTioClusterTopic("push-channel",redissonClient));
         serverGroupContext.setTioClusterConfig(tioClusterConfig);
         serverGroupContext.setHeartbeatTimeout(Const.TIMEOUT);

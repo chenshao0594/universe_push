@@ -26,10 +26,10 @@ public class PushServiceImpl implements PushService{
     }
 
     @Override
-    public void pushByToken(String token,String message) {
+    public boolean pushByToken(String token,String message) {
         logger.info("pushByToken-> "+token+" message->"+message);
         PushMessagePacket pushMessagePacket = new PushMessagePacket(message);
-        Tio.sendToBsId(PushServerStarter.serverGroupContext,token,pushMessagePacket);
+        return Tio.sendToBsId(PushServerStarter.serverGroupContext,token,pushMessagePacket);
     }
 
     @Override

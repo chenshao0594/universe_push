@@ -6,6 +6,7 @@ import com.comsince.github.context.SpringApplicationContext;
 import com.comsince.github.sub.SubResponse;
 import com.comsince.github.sub.SubResponsePacket;
 import com.comsince.github.sub.SubService;
+import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tio.core.ChannelContext;
@@ -28,11 +29,13 @@ public class SubResponseProcessor implements MessageProcessor {
 
         subResponse.setToken(token);
         logger.info("receive signal "+pushPacket.getHeader().getSignal()+" generate token "+token);
-
         SubResponsePacket subResponsePacket = new SubResponsePacket(subResponse);
         //绑定token
         Tio.bindBsId(channelContext,token);
         Tio.send(channelContext,subResponsePacket);
+
+        RedissonClient redissonClient = (RedissonClient) SpringApplicationContext.getBean("redissonClient");
+        redissonClient.getMap("online_status").fastPut(token,1);
     }
 
     @Override

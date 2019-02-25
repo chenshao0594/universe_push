@@ -14,7 +14,7 @@ public interface PushService {
     /**
      * 单推接口
      * */
-    void pushByToken(String token, String message);
+    boolean pushByToken(String token, String message);
 
 
     void pushByTokens(List<String> token, String message);

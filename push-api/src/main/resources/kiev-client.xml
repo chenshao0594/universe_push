@@ -2,7 +2,7 @@
 <beans xmlns:context="http://www.springframework.org/schema/context"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:kiev="http://www.meizu.com/kiev/schema/service"
-       xmlns="http://www.springframework.org/schema/beans"
+       xmlns="http://www.springframework.org/schema/beans" xmlns:redisson="http://redisson.org/schema/redisson"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
 	 http://www.springframework.org/schema/context
@@ -17,5 +17,4 @@
     <kiev:client loadbalancer="roundrobin" timeout="3000"/>
     <!--推送服务 -->
     <kiev:stub id="pushService" interface="com.comsince.github.PushService"  node="/comsince/github/pushconnector" timeout="3000"/>
-
 </beans>
