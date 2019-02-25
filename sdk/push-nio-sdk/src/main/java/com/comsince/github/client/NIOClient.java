@@ -9,13 +9,7 @@ import com.comsince.github.logger.Log;
 import com.comsince.github.push.Header;
 import com.comsince.github.push.Signal;
 import com.comsince.github.logger.LoggerFactory;
-
 import java.nio.charset.Charset;
-import java.util.Random;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback {
     Log log = LoggerFactory.getLogger(NIOClient.class);
@@ -26,6 +20,7 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
     private static final int initInterval = 30 * 1000;
     private int interval = initInterval;
     private int heartNum = 1;
+    private Object scheduled;
     private int reconnectNum = 0;
     private Cancellable cancellable;
 
@@ -173,11 +168,14 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
     }
 
     private void scheduleHeartbeat(){
-        asyncServer.postDelayed(new Runnable() {
+        if(scheduled != null){
+            asyncServer.removeAllCallbacks(scheduled);
+        }
+        scheduled = asyncServer.postDelayed(new Runnable() {
             @Override
             public void run() {
                 heart();
             }
-        },interval);
+        }, interval);
     }
 }
