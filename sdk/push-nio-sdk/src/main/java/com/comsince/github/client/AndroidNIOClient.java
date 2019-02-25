@@ -6,28 +6,23 @@ import com.comsince.github.core.callback.ConnectCallback;
 import com.comsince.github.core.callback.DataCallback;
 import com.comsince.github.core.future.Cancellable;
 import com.comsince.github.logger.Log;
+import com.comsince.github.logger.LoggerFactory;
 import com.comsince.github.push.Header;
 import com.comsince.github.push.Signal;
-import com.comsince.github.logger.LoggerFactory;
+
 import java.nio.charset.Charset;
 
-/***
- *
- * NIO client 心跳与重新机制全部由自己实现
- *
- **/
 
-public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback {
+/**
+ *
+ * 这里Android client，提供心跳回调机制，方便客户端自由定制
+ * */
+public class AndroidNIOClient implements ConnectCallback,DataCallback,CompletedCallback {
     Log log = LoggerFactory.getLogger(NIOClient.class);
     private AsyncServer asyncServer;
     private AsyncSocket asyncSocket;
     private String host;
     private int port;
-    private static final int initInterval = 30 * 1000;
-    private int interval = initInterval;
-    private int heartNum = 1;
-    private Object scheduled;
-    private int reconnectNum = 0;
     private Cancellable cancellable;
 
     volatile boolean isConnected = false;
@@ -41,7 +36,7 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
         this.pushMessageCallback = pushMessageCallback;
     }
 
-    public NIOClient(String host, int port) {
+    public AndroidNIOClient(String host, int port) {
         this.host = host;
         this.port = port;
         asyncServer = new AsyncServer(host+"-"+port);
@@ -73,8 +68,8 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
         });
     }
 
-    private void heart(){
-        log.i("send heartbeat");
+    public void heart(){
+        log.i("Android client send heartbeat");
         Header header = new Header();
         header.setSignal(Signal.PING);
         byte[] sendByte = header.getContents();
@@ -94,20 +89,14 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
                 pushMessageCallback.receiveException(ex);
             }
             log.e("connect failed",ex);
-            interval = initInterval;
-            reconnect();
             return;
         }
 
         isConnected = true;
-        reconnectNum = 0;
         this.asyncSocket = socket;
         asyncSocket.setDataCallback(this);
         asyncSocket.setClosedCallback(this);
-
         sub();
-        scheduleHeartbeat();
-
     }
 
     @Override
@@ -123,16 +112,6 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
 
         if(receiveBuffer.remaining() == bodyLength){
             String message = receiveBuffer.readString(Charset.forName("UTF-8"));
-
-            if(receiveHeader.getSignal() == Signal.PING){
-                heartNum++;
-                interval = interval + 30 * 1000 * heartNum;
-                if(interval > 5 * 60 * 1000){
-                    interval = 5 * 60 * 1000;
-                }
-                message = message + " next interval "+interval/1000 +" seconds";
-                scheduleHeartbeat();
-            }
             String logMessage = "receive signal ["+receiveHeader.getSignal()+"] body-> "+message;
             log.i(logMessage);
             if(pushMessageCallback != null){
@@ -150,38 +129,8 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
         if(ex != null) {
             log.e("onCompleted ",ex);
         }
-        interval = initInterval;
-        heartNum = 1;
         isConnected = false;
-        reconnect();
     }
 
-    private void reconnect() {
-        reconnectNum ++;
-        log.i("reconnect start num "+reconnectNum);
-        if(reconnectNum < 5){
-            asyncServer.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if(!isConnected){
-                        asyncServer.connectSocket(host,port,NIOClient.this);
-                    }
-                }
-            },10 * 1000);
-        } else {
-            log.i("reconnect reach max time");
-        }
-    }
 
-    private void scheduleHeartbeat(){
-        if(scheduled != null){
-            asyncServer.removeAllCallbacks(scheduled);
-        }
-        scheduled = asyncServer.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                heart();
-            }
-        }, interval);
-    }
 }
