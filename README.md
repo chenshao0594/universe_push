@@ -7,7 +7,7 @@
 
 ![image](attachment/push-universe.png)
 
-## push-connector
+## Push-connector
 ### 基本功能
 * 提供集群链接管理的能力
 * 提供消息群发的功能
@@ -15,14 +15,14 @@
 * 客户端管理服务
 
 
-## push-gate
+## Push-gate
 ### 基本功能
 所有推送到客户端的请求都必须经过此网关，确保推送出口一致，此网关仅仅提供RPC调用接口，以提高接口调用效率
 * 提供单推功能
 * 提供群组推送功能
 * 离线消息缓存功能
 
-## push-api
+## Push-api
 ### 基本功能
 提供推送Http接口服务，调用推送网关发送推送消息，此接口采用springboot开发web服务
 
