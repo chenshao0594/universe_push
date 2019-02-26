@@ -10,6 +10,7 @@ import com.comsince.github.logger.LoggerFactory;
 import com.comsince.github.push.Header;
 import com.comsince.github.push.Signal;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 
@@ -68,12 +69,24 @@ public class AndroidNIOClient implements ConnectCallback,DataCallback,CompletedC
         });
     }
 
-    public void heart(){
+    /**
+     * @param interval 距离下次心跳间隔，单位毫秒
+     * */
+    public void heart(long interval){
         log.i("Android client send heartbeat");
+        ByteBufferList heartBuffer = new ByteBufferList();
         Header header = new Header();
         header.setSignal(Signal.PING);
-        byte[] sendByte = header.getContents();
-        Util.writeAll(asyncSocket, sendByte, new CompletedCallback() {
+        String heartInterval = "{\"interval\":"+interval+"}";
+        header.setLength(heartInterval.getBytes().length);
+
+        ByteBuffer allBuffer = ByteBufferList.obtain(Header.LENGTH + header.getLength());
+        allBuffer.put(header.getContents());
+        allBuffer.put(heartInterval.getBytes());
+        allBuffer.flip();
+        heartBuffer.add(allBuffer);
+
+        Util.writeAll(asyncSocket, heartBuffer, new CompletedCallback() {
             @Override
             public void onCompleted(Exception ex) {
                 log.e("send heartbeat completed",ex);

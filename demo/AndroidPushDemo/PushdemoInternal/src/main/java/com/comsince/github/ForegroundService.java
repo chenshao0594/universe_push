@@ -38,7 +38,8 @@ public class ForegroundService extends Service implements PushMessageCallback {
         super.onCreate();
         alarmWrapper = new AlarmWrapper(this,"push-connector");
         alarmWrapper.start();
-        androidNIOClient = new AndroidNIOClient("172.16.177.107",6789);
+        //androidNIOClient = new AndroidNIOClient("172.16.177.107",6789);
+        androidNIOClient = new AndroidNIOClient("172.16.46.201",6789);
         androidNIOClient.setPushMessageCallback(this);
     }
 
@@ -121,12 +122,16 @@ public class ForegroundService extends Service implements PushMessageCallback {
 
     private void schedule(){
         alarmWrapper.schedule(hearbeatTimer =
-                new Timer.Builder().period((30 + 30 * interval++) * 1000)
+                new Timer.Builder().period((30 + 30 * interval) * 1000)
                 .wakeup(true)
                 .action(new Runnable() {
                     @Override
                     public void run() {
-                         androidNIOClient.heart();
+                         long current = (30 + 30 * ++interval) * 1000;
+                        if(current > 20 * 60 * 1000){
+                            current = 15 * 60 * 1000;
+                        }
+                         androidNIOClient.heart(current);
                     }
                 }).build());
     }

@@ -178,10 +178,10 @@ public class ServerGroupContext extends GroupContext {
 							} else {
 								needRemove = interval > heartbeatTimeout;
 							}
-							//这里不要主动关闭链接，会导致
+							//这里不要主动关闭链接，会导致,在channelcontext设置heartbeat时长
 							if (needRemove) {
 								log.info("{}, {} ms没有收发消息", channelContext, interval);
-								//Tio.remove(channelContext, interval + " ms没有收发消息");
+								Tio.remove(channelContext, interval + " ms没有收发消息");
 							}
 						}
 					} catch (Throwable e) {

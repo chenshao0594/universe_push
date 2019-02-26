@@ -9,6 +9,8 @@ import com.comsince.github.logger.Log;
 import com.comsince.github.push.Header;
 import com.comsince.github.push.Signal;
 import com.comsince.github.logger.LoggerFactory;
+
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 /***
@@ -75,10 +77,25 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
 
     private void heart(){
         log.i("send heartbeat");
+        heartNum++;
+        interval = interval + 30 * 1000 * heartNum;
+        if(interval > 5 * 60 * 1000){
+            interval = 5 * 60 * 1000;
+        }
+
+        ByteBufferList heartBuffer = new ByteBufferList();
         Header header = new Header();
         header.setSignal(Signal.PING);
-        byte[] sendByte = header.getContents();
-        Util.writeAll(asyncSocket, sendByte, new CompletedCallback() {
+        String heartInterval = "{\"interval\":"+interval+"}";
+        header.setLength(heartInterval.getBytes().length);
+
+        ByteBuffer allBuffer = ByteBufferList.obtain(Header.LENGTH + header.getLength());
+        allBuffer.put(header.getContents());
+        allBuffer.put(heartInterval.getBytes());
+        allBuffer.flip();
+        heartBuffer.add(allBuffer);
+
+        Util.writeAll(asyncSocket, heartBuffer, new CompletedCallback() {
             @Override
             public void onCompleted(Exception ex) {
                 log.e("send heartbeat completed",ex);
@@ -125,12 +142,6 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
             String message = receiveBuffer.readString(Charset.forName("UTF-8"));
 
             if(receiveHeader.getSignal() == Signal.PING){
-                heartNum++;
-                interval = interval + 30 * 1000 * heartNum;
-                if(interval > 5 * 60 * 1000){
-                    interval = 5 * 60 * 1000;
-                }
-                message = message + " next interval "+interval/1000 +" seconds";
                 scheduleHeartbeat();
             }
             String logMessage = "receive signal ["+receiveHeader.getSignal()+"] body-> "+message;

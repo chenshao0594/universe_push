@@ -6,6 +6,7 @@ import com.comsince.github.context.SpringApplicationContext;
 import com.comsince.github.sub.SubResponse;
 import com.comsince.github.sub.SubResponsePacket;
 import com.comsince.github.sub.SubService;
+import org.apache.commons.lang.StringUtils;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,23 +20,24 @@ public class SubResponseProcessor implements MessageProcessor {
     public void process(PushPacket pushPacket, ChannelContext channelContext) {
         SubResponse subResponse = new SubResponse();
         subResponse.setStatus(200);
-        SubService subService = (SubService) SpringApplicationContext.getBean("subService");
-        String token;
-        if(subService == null){
-            token = new DefaultTioUuid().uuid();
-        } else {
-            token = subService.generateToken();
+        String token = channelContext.getBsId();
+        if(!StringUtils.isNotBlank(token)){
+            logger.info("channel connect generate token fail so regenerate token");
+            SubService subService = (SubService) SpringApplicationContext.getBean("subService");
+            if(subService == null){
+                token = new DefaultTioUuid().uuid();
+            } else {
+                token = subService.generateToken();
+            }
+            RedissonClient redissonClient = (RedissonClient) SpringApplicationContext.getBean("redissonClient");
+            redissonClient.getMap("online_status").fastPut(token,1);
         }
-
         subResponse.setToken(token);
         logger.info("receive signal "+pushPacket.getHeader().getSignal()+" generate token "+token);
         SubResponsePacket subResponsePacket = new SubResponsePacket(subResponse);
         //绑定token
         Tio.bindBsId(channelContext,token);
         Tio.send(channelContext,subResponsePacket);
-
-        RedissonClient redissonClient = (RedissonClient) SpringApplicationContext.getBean("redissonClient");
-        redissonClient.getMap("online_status").fastPut(token,1);
     }
 
     @Override
