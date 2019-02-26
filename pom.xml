@@ -32,6 +32,7 @@
         <module>push-connector</module>
         <module>push-gate</module>
         <module>push-api</module>
+        <module>push-group</module>
         <module>push-sub</module>
         <module>sdk</module>
 

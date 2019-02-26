@@ -15,6 +15,7 @@ public class MessageDispatcher {
         pushMessageProcessors.add(new SubResponseProcessor());
         pushMessageProcessors.add(new HeartbeatResponseProcessor());
         pushMessageProcessors.add(new PushMessageProcessor());
+        pushMessageProcessors.add(new GroupContactProcessor());
     }
     public static void handleMessage(PushPacket pushPacket, ChannelContext channelContext){
         logger.info("start handleMessage "+pushPacket.getHeader().getSignal());

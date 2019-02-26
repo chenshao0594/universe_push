@@ -3,6 +3,7 @@ package com.comsince.github;
 import java.util.List;
 
 /**
+ * 普通消息推送,在消息体自定义格式实现消息自行解析
  * @author comsicne
  *         Copyright (c) [2019] [Meizu.inc]
  * @Time 19-2-14 上午11:38

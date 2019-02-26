@@ -23,9 +23,15 @@
 	<kiev:service ref="pushServiceImpl" id="pushService"
 				  node="/comsince/github/pushconnector" type="TCP" />
 
+	<kiev:service ref="groupContactServiceImpl" id="groupContactService"
+				  node="/comsince/github/pushconnector" type="TCP" />
+
+
 	<kiev:client loadbalancer="roundrobin" timeout="3000"/>
 	<!--订阅服务 -->
 	<kiev:stub id="subService" interface="com.comsince.github.sub.SubService"  node="/comsince/github/sub" timeout="3000"/>
+
+	<kiev:stub id="pushGroupService" interface="com.comsince.github.PushGroupService" node="/comsince/github/push-group" timeout="3000" />
 
 	<bean id="pushServerStarter" class="com.comsince.github.PushServerStarter" init-method="init"/>
 

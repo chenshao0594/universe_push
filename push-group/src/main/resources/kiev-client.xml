@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:kiev="http://www.meizu.com/kiev/schema/service"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+	 http://www.springframework.org/schema/context
+	 http://www.springframework.org/schema/context/spring-context.xsd
+	 http://www.meizu.com/kiev/schema/service
+	 http://www.meizu.com/kiev/schema/service.xsd">
+
+    <context:component-scan base-package="com.comsince.github"/>
+
+    <kiev:registry url="${kiev.zookeeper-url}" />
+    <kiev:application appName="${kiev.application-name}" phones="123456789"/>
+    <kiev:client loadbalancer="roundrobin" timeout="3000"/>
+    <!--推送服务 -->
+    <kiev:stub id="pushService" interface="com.comsince.github.PushService"  node="/comsince/github/pushconnector" timeout="3000"/>
+
+    <kiev:stub id="groupContactService" interface="com.comsince.github.GroupContactService"  node="/comsince/github/pushconnector" timeout="3000"/>
+
+</beans>
