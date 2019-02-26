@@ -38,8 +38,8 @@ public class ForegroundService extends Service implements PushMessageCallback {
         super.onCreate();
         alarmWrapper = new AlarmWrapper(this,"push-connector");
         alarmWrapper.start();
-        //androidNIOClient = new AndroidNIOClient("172.16.177.107",6789);
-        androidNIOClient = new AndroidNIOClient("172.16.46.201",6789);
+        androidNIOClient = new AndroidNIOClient("172.16.177.107",6789);
+        //androidNIOClient = new AndroidNIOClient("172.16.46.201",6789);
         androidNIOClient.setPushMessageCallback(this);
     }
 
