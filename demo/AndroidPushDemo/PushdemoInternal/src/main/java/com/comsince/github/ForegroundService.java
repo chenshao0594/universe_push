@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
 
-import com.comsince.github.client.NIOClient;
+import com.comsince.github.alarm.AlarmWrapper;
+import com.comsince.github.alarm.Timer;
+import com.comsince.github.client.AndroidNIOClient;
 import com.comsince.github.client.PushMessageCallback;
 import com.comsince.github.logger.JavaLogger;
 import com.comsince.github.push.Signal;
@@ -25,14 +27,19 @@ public class ForegroundService extends Service implements PushMessageCallback {
     // Unique Identification Number for the Notification.
     // We use it on Notification start, and to cancel it.
 
-    NIOClient nioClient;
+    AndroidNIOClient androidNIOClient;
+    AlarmWrapper alarmWrapper;
+    Timer hearbeatTimer;
+    Timer reconnectTimer;
+    int interval = 0;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
-        nioClient = new NIOClient("172.16.177.107",6789);
-        nioClient.setPushMessageCallback(this);
+        alarmWrapper = new AlarmWrapper(this,"push-connector");
+        alarmWrapper.start();
+        androidNIOClient = new AndroidNIOClient("172.16.177.107",6789);
+        androidNIOClient.setPushMessageCallback(this);
     }
 
     @Override
@@ -59,7 +66,7 @@ public class ForegroundService extends Service implements PushMessageCallback {
 
             startForeground(FOREGROUND_SERVICE,notification);
         }
-        nioClient.connect();
+        androidNIOClient.connect();
         return START_NOT_STICKY;
     }
 
@@ -69,7 +76,8 @@ public class ForegroundService extends Service implements PushMessageCallback {
         stopForeground(true);
         super.onDestroy();
         DebugLogger.i(START_FOREGROUD_SERVICE,"close push channel");
-        nioClient.close();
+        alarmWrapper.stop();
+        androidNIOClient.close();
     }
     @Override
     public IBinder onBind(Intent intent) {
@@ -79,6 +87,14 @@ public class ForegroundService extends Service implements PushMessageCallback {
     @Override
     public void receiveMessage(Signal signal,String s) {
         PushDemoApplication.sendMessage("receive signal ["+signal.name()+"] body:"+s);
+        if(reconnectTimer != null){
+            alarmWrapper.cancel(reconnectTimer);
+        }
+        if(Signal.SUB == signal){
+            schedule();
+        } else if(Signal.PING == signal){
+            schedule();
+        }
     }
 
     @Override
@@ -88,5 +104,30 @@ public class ForegroundService extends Service implements PushMessageCallback {
             logMessage = JavaLogger.getStackMsg(e);
         }
         PushDemoApplication.sendMessage("receive error message "+logMessage);
+        if(hearbeatTimer != null){
+            alarmWrapper.cancel(hearbeatTimer);
+        }
+        interval = 0;
+        alarmWrapper.schedule(reconnectTimer =
+                new Timer.Builder().period(10 * 1000)
+                        .wakeup(true)
+                        .action(new Runnable() {
+                            @Override
+                            public void run() {
+                                androidNIOClient.connect();
+                            }
+                        }).build());
+    }
+
+    private void schedule(){
+        alarmWrapper.schedule(hearbeatTimer =
+                new Timer.Builder().period((30 + 30 * interval++) * 1000)
+                .wakeup(true)
+                .action(new Runnable() {
+                    @Override
+                    public void run() {
+                         androidNIOClient.heart();
+                    }
+                }).build());
     }
 }
