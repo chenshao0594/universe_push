@@ -93,6 +93,7 @@ public class ForegroundService extends Service implements PushMessageCallback {
         }
         if(Signal.SUB == signal){
             schedule();
+            PushDemoApplication.setToken(s);
         } else if(Signal.PING == signal){
             schedule();
         }
