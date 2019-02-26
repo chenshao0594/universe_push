@@ -12,11 +12,11 @@
 
     <context:component-scan base-package="com.comsince.github"/>
 
-    <kiev:registry url="${kiev.zookeeper-url}" />
-    <kiev:application appName="${kiev.application-name}" phones="123456789"/>
+    <!--<kiev:registry url="${kiev.zookeeper-url}" />-->
+    <!--<kiev:application appName="${kiev.application-name}" phones="123456789"/>-->
     <kiev:server syncThreadPool="1024" asyncThreadPool="1024" port="6419" />
 
-    <kiev:service ref="pushGroupServiceImpl" id="pushGroupServiceImpl"
+    <kiev:service ref="pushGroupServiceImpl" id="pushGroupService"
                   node="/comsince/github/push-group" type="TCP" />
 
 </beans>

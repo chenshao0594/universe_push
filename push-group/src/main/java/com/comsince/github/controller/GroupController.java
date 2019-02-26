@@ -41,7 +41,7 @@ public class GroupController {
     /**
      * 创建群组
      * */
-    @RequestMapping(value = "joinGroup")
+    @RequestMapping(value = "createGroup")
     public void createGroup(@RequestParam String group){
 
     }
