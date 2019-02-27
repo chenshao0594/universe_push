@@ -28,8 +28,8 @@ public class ConnectService implements PushMessageCallback {
     public ConnectService(Context context,String authority){
         alarmWrapper = new AlarmWrapper(context,authority);
         alarmWrapper.start();
-        //androidNIOClient = new AndroidNIOClient("172.16.177.107",6789);
-        androidNIOClient = new AndroidNIOClient("172.16.46.201",6789);
+        androidNIOClient = new AndroidNIOClient("172.16.177.107",6789);
+        //androidNIOClient = new AndroidNIOClient("172.16.46.201",6789);
         androidNIOClient.setPushMessageCallback(this);
     }
 

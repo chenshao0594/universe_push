@@ -10,10 +10,6 @@ import android.os.IBinder;
 import com.comsince.github.push.Signal;
 import com.meizu.cloud.pushinternal.DebugLogger;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-
 /**
  * Created by liaojinlong on 16-4-21.
  */
