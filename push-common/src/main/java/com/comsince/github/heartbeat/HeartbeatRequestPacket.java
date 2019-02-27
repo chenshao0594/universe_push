@@ -7,6 +7,7 @@ import com.comsince.github.Signal;
 import java.nio.ByteBuffer;
 
 public class HeartbeatRequestPacket extends PushPacket {
+
     @Override
     public ByteBuffer encode() {
         int bodyLength = 0;

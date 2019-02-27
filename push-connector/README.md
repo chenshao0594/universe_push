@@ -49,3 +49,7 @@
 > 消息发布订阅模型  
   
 客户端与connector的映射关系可以在redis中维护，可以采用redis的发布订阅模型通知其他connector进行后续操作
+
+
+## 负载均衡
+不同push-connector需要进行负载均衡，这里使用nginx的tcp代理模块实现

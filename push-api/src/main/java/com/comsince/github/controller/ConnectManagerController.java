@@ -1,6 +1,6 @@
 package com.comsince.github.controller;
 
-import com.comsince.github.PushResponse;
+import com.comsince.github.model.PushResponse;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

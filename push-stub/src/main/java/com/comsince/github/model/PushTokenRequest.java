@@ -1,4 +1,4 @@
-package com.comsince.github;
+package com.comsince.github.model;
 
 
 import com.alibaba.fastjson.JSON;

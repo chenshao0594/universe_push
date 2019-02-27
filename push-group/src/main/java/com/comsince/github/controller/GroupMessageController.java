@@ -1,7 +1,7 @@
 package com.comsince.github.controller;
 
-import com.comsince.github.PushResponse;
 import com.comsince.github.PushService;
+import com.comsince.github.model.PushResponse;
 import org.redisson.api.RList;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class GroupMessageController {
     private PushService pushService;
 
     @RequestMapping(value = "sendToGroup")
-    public PushResponse sendToGroup(@RequestParam String token, @RequestParam String group,@RequestParam String message){
+    public PushResponse sendToGroup(@RequestParam String token, @RequestParam String group, @RequestParam String message){
         RList<String> tokenList = redissonClient.getList(group);
         if(tokenList != null){
             for(String sendToken : tokenList){

@@ -24,7 +24,7 @@ public class PushClientStarter {
     public static Node serverNode2 = new Node("172.16.177.107", Const.PORT);
     public static Node serverNode1 = new Node("172.16.176.23", Const.PORT);
     public static Node serverNode0 = new Node("172.16.176.25", Const.PORT);
-    public static Node serverNode = new Node(Const.SERVER, Const.PORT);
+    public static Node serverNode = new Node(Const.SERVER, 9945);
 
     //handler, 包括编码、解码、消息处理
     public static ClientAioHandler tioClientHandler = new PushClientHandler();
@@ -81,12 +81,16 @@ public class PushClientStarter {
         ClientChannelContext channelContext = tioClient.connect(node);
         send(channelContext);
         Random random = new Random();
+        int interval = (random.nextInt(60) + 180) * 1000;
         scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                Tio.send(channelContext, new HeartbeatRequestPacket());
+                HeartbeatRequestPacket heartbeatRequestPacket = new HeartbeatRequestPacket();
+                String heartInterval = "{\"interval\":"+interval+"}";
+                heartbeatRequestPacket.setBody(heartInterval.getBytes());
+                Tio.send(channelContext, heartbeatRequestPacket);
             }
-        },10*1000, (random.nextInt(60) + 180) * 1000, TimeUnit.MILLISECONDS);
+        },10*1000, interval, TimeUnit.MILLISECONDS);
     }
 
     private static void send(ClientChannelContext channelContext) throws Exception {

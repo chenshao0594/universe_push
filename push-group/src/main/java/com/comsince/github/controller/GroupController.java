@@ -1,6 +1,6 @@
 package com.comsince.github.controller;
 
-import com.comsince.github.PushResponse;
+import com.comsince.github.model.PushResponse;
 import org.redisson.api.RList;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
