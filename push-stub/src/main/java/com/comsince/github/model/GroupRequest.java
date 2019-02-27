@@ -1,5 +1,7 @@
 package com.comsince.github.model;
 
+import java.io.Serializable;
+
 /**
  * @author comsicne
  *         Copyright (c) [2019] [Meizu.inc]
@@ -13,9 +15,9 @@ package com.comsince.github.model;
         "message":"消息内容，可以自定义，方便用扩展图片，视频类消息"
     }
  **/
-public class GroupRequest {
+public class GroupRequest implements Serializable{
 
-    public static final int SIGNAL_CONTACT_MESSAGE = 0;
+    public static final int SIGNAL_CONTACT_MESSAGE = 1;
     public static final int GROUP_CONTACT_MESSAGE = 0;
 
     String from;
@@ -71,5 +73,17 @@ public class GroupRequest {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    @Override
+    public String toString() {
+        return "GroupRequest{" +
+                "from='" + from + '\'' +
+                ", to='" + to + '\'' +
+                ", group='" + group + '\'' +
+                ", type=" + type +
+                ", messageType=" + messageType +
+                ", message='" + message + '\'' +
+                '}';
     }
 }

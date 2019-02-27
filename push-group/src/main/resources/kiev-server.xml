@@ -14,7 +14,7 @@
 
     <!--<kiev:registry url="${kiev.zookeeper-url}" />-->
     <!--<kiev:application appName="${kiev.application-name}" phones="123456789"/>-->
-    <kiev:server syncThreadPool="1024" asyncThreadPool="1024" port="6419" />
+    <kiev:server syncThreadPool="1024" asyncThreadPool="1024" port="6429" />
 
     <kiev:service ref="pushGroupServiceImpl" id="pushGroupService"
                   node="/comsince/github/push-group" type="TCP" />

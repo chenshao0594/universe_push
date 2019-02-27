@@ -74,22 +74,32 @@ public class AndroidNIOClient implements ConnectCallback,DataCallback,CompletedC
      * */
     public void heart(long interval){
         log.i("Android client send heartbeat");
-        ByteBufferList heartBuffer = new ByteBufferList();
-        Header header = new Header();
-        header.setSignal(Signal.PING);
         String heartInterval = "{\"interval\":"+interval+"}";
-        header.setLength(heartInterval.getBytes().length);
-
-        ByteBuffer allBuffer = ByteBufferList.obtain(Header.LENGTH + header.getLength());
-        allBuffer.put(header.getContents());
-        allBuffer.put(heartInterval.getBytes());
-        allBuffer.flip();
-        heartBuffer.add(allBuffer);
-
-        Util.writeAll(asyncSocket, heartBuffer, new CompletedCallback() {
+        sendMessage(Signal.PING, heartInterval, new CompletedCallback() {
             @Override
             public void onCompleted(Exception ex) {
                 log.e("send heartbeat completed",ex);
+            }
+        });
+    }
+
+    public void sendMessage(Signal signal, String body, final CompletedCallback completedCallback){
+        ByteBufferList bufferList = new ByteBufferList();
+        Header header = new Header();
+        header.setSignal(signal);
+        header.setLength(body.getBytes().length);
+
+        ByteBuffer allBuffer = ByteBufferList.obtain(Header.LENGTH + header.getLength());
+        allBuffer.put(header.getContents());
+        allBuffer.put(body.getBytes());
+        allBuffer.flip();
+        bufferList.add(allBuffer);
+
+        Util.writeAll(asyncSocket, bufferList, new CompletedCallback() {
+            @Override
+            public void onCompleted(Exception ex) {
+                log.e("send heartbeat completed",ex);
+                completedCallback.onCompleted(ex);
             }
         });
     }

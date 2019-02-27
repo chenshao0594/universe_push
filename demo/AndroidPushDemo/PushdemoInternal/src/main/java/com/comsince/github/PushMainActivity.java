@@ -1,7 +1,6 @@
 package com.comsince.github;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,7 +14,6 @@ import com.meizu.cloud.pushinternal.DebugLogger;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Timer;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import okhttp3.Call;
@@ -28,9 +26,9 @@ import okhttp3.Response;
  * Created by liaojinlong on 2019/2/23.
  */
 
-public class PushLogActivity extends Activity implements View.OnClickListener{
+public class PushMainActivity extends Activity implements View.OnClickListener{
 
-    private String TAG = "PushLogActivity";
+    private String TAG = "PushMainActivity";
 
     private TextView logTv;
 
@@ -39,9 +37,9 @@ public class PushLogActivity extends Activity implements View.OnClickListener{
     private EditText groupEt;
     private EditText sendMessageEt;
     private Button joinGroupBt;
-    private Button sendBt;
+    private Button sendAllBt;
+    private Button sendPrivateBt;
 
-    OkHttpClient client = new OkHttpClient();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,8 +51,8 @@ public class PushLogActivity extends Activity implements View.OnClickListener{
 
         initView();
 
-        Intent intent = new Intent(this,ForegroundService.class);
-        intent.setAction(ForegroundService.START_FOREGROUD_SERVICE);
+        Intent intent = new Intent(this,PushService.class);
+        intent.setAction(PushService.START_FOREGROUD_SERVICE);
         startService(intent);
     }
 
@@ -62,10 +60,12 @@ public class PushLogActivity extends Activity implements View.OnClickListener{
         groupEt = findViewById(R.id.push_group);
         sendMessageEt = findViewById(R.id.send_message);
         joinGroupBt = findViewById(R.id.join_group);
-        sendBt = findViewById(R.id.send);
+        sendAllBt = findViewById(R.id.send_all);
+        sendPrivateBt = findViewById(R.id.send_private);
 
         joinGroupBt.setOnClickListener(this);
-        sendBt.setOnClickListener(this);
+        sendAllBt.setOnClickListener(this);
+        sendPrivateBt.setOnClickListener(this);
     }
 
 
@@ -93,31 +93,40 @@ public class PushLogActivity extends Activity implements View.OnClickListener{
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.send:
+            case R.id.send_all:
+                sendAll(groupEt.getText().toString(),sendMessageEt.getText().toString());
                 break;
             case R.id.join_group:
-                joinGroup(groupEt.getText().toString(),PushDemoApplication.pushToken);
+                joinGroup(groupEt.getText().toString());
                 break;
+            case R.id.send_private:
+
             default:
                 break;
         }
     }
 
-    private void joinGroup(String group,String token){
-        final Request request = new Request.Builder()
-                .url("http://192.168.0.100:8080/group/joinGroup?group="+group+"&token="+token)
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                DebugLogger.e(TAG,e.getMessage());
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                DebugLogger.i(TAG,"join group "+response.body().string());
-            }
-        });
+    private void joinGroup(String group){
+        Intent intent = new Intent(this,PushService.class);
+        intent.setAction(GroupService.ACTION_GROUP_JOIN_GROUP);
+        intent.putExtra(GroupService.GROUP_NAME,group);
+        startService(intent);
     }
+
+    private void sendPrivate(String group){
+        Intent intent = new Intent(this,PushService.class);
+        intent.setAction(GroupService.ACTION_GROUP_JOIN_GROUP);
+        intent.putExtra(GroupService.GROUP_NAME,group);
+        startService(intent);
+    }
+
+    private void sendAll(String group,String message){
+        Intent intent = new Intent(this,PushService.class);
+        intent.setAction(GroupService.ACTION_SEND_PUBLIC_MESSAGE);
+        intent.putExtra(GroupService.GROUP_NAME,group);
+        intent.putExtra(GroupService.GROUP_MESSAGE,message);
+        startService(intent);
+    }
+
+
 }

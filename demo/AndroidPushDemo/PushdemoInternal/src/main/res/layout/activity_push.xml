@@ -3,7 +3,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                tools:context=".PushLogActivity">
+                tools:context=".PushMainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,6 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="3"
+            android:hint="comsince"
             android:id="@+id/push_group"/>
         <Button
             android:layout_width="wrap_content"
@@ -36,9 +37,16 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="发送"
+            android:text="发送群组消息"
             android:layout_weight="1"
-            android:id="@+id/send"/>
+            android:id="@+id/send_all"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="发送私有消息"
+            android:layout_weight="1"
+            android:id="@+id/send_private"/>
     </LinearLayout>
 
     <ScrollView

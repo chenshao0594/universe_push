@@ -16,8 +16,7 @@ import java.util.Date;
 
 public class PushDemoApplication extends Application {
     private static DemoHandler sHandler = null;
-    private static PushLogActivity pushLogActivity = null;
-    public static String pushToken;
+    private static PushMainActivity pushLogActivity = null;
 
     @Override
     public void onCreate() {
@@ -32,12 +31,8 @@ public class PushDemoApplication extends Application {
         return sHandler;
     }
 
-    public static void setPushLogActivity(PushLogActivity activity) {
+    public static void setPushLogActivity(PushMainActivity activity) {
         pushLogActivity = activity;
-    }
-
-    public static void setToken(String token){
-        pushToken = token;
     }
 
     public static class DemoHandler extends Handler {
@@ -51,7 +46,7 @@ public class PushDemoApplication extends Application {
         @Override
         public void handleMessage(Message msg) {
             String s = (String) msg.obj;
-            PushLogActivity.logList.add(0, getSimpleDate() + " " + s);
+            PushMainActivity.logList.add(0, getSimpleDate() + " " + s);
             if (pushLogActivity != null) {
                 pushLogActivity.refreshLogInfo();
             }
