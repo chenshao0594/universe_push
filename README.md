@@ -4,6 +4,12 @@
 这样的目的也是基于业务扩展的方式，方便以后能够在基于此通信架构基础上衍生其他相关业务，从而保持业务的独立性，增加项目的可维护性。
 
 > 为了开源以及方便部署,将更换RPC框架为`Dubbo`,并且全部基于`SpringBoot`
+
+# 部署说明
+
+* 启动`spring-boot-dubbo-push-subscribe`订阅服务
+* 启动`spring-boot-dubbo-push-connector`链接服务
+
 # 基础架构
 
 ![image](attachment/push-universe.png)
@@ -34,7 +40,11 @@
 
 # 部署
 
-**NOTE:** 部署connector要同时更新，防止出现redisson发布订阅数据解析问题
+## 常见问题
+
+> 部署connector要同时更新，防止出现redisson发布订阅数据解析问题
+
+> redisson 发布时最好使用统一个logger,不然会有序列化问题
 
 # 参考资料
 ## 参考项目
