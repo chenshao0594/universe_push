@@ -10,6 +10,13 @@
     <name>comsince</name>
     <url>http://comsince.github.io</url>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.1.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
     <properties>
         <project.verson>1.0.0-SNAPSHOT</project.verson>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,80 +24,31 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
         <mysql-connector-java.version>5.1.34</mysql-connector-java.version>
-        <spring.version>4.3.18.RELEASE</spring.version>
+        <spring.version>5.1.5.RELEASE</spring.version>
         <sharding-sphere.version>3.1.0</sharding-sphere.version>
         <mybatis-spring.version>1.3.2</mybatis-spring.version>
         <mybatis.version>3.4.2</mybatis.version>
         <aspectjweaver.version>1.8.9</aspectjweaver.version>
+        <spring-boot.version>2.1.1.RELEASE</spring-boot.version>
+        <dubbo.version>2.7.0</dubbo.version>
     </properties>
 
     <modules>
         <module>tio-core</module>
-        <module>push-auth</module>
         <module>push-common</module>
         <module>push-stub</module>
-        <module>push-connector</module>
-        <module>push-api</module>
-        <module>push-group</module>
-        <module>push-sub</module>
         <module>sdk</module>
+
+        <module>spring-boot-dubbo-push-connector</module>
+        <module>spring-boot-dubbo-push-subscribe</module>
+        <module>spring-boot-web-push-api</module>
+        <module>sping-boot-web-push-group</module>
 
     </modules>
 
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql-connector-java.version}</version>
-            </dependency>
-
-            <!--mybatis-->
-            <dependency>
-                <groupId>org.mybatis</groupId>
-                <artifactId>mybatis</artifactId>
-                <version>${mybatis.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.mybatis</groupId>
-                <artifactId>mybatis-spring</artifactId>
-                <version>${mybatis-spring.version}</version>
-            </dependency>
-
-            <!-- sharding -->
-
-            <dependency>
-                <groupId>io.shardingsphere</groupId>
-                <artifactId>sharding-jdbc-spring-namespace</artifactId>
-                <version>${sharding-sphere.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.shardingsphere</groupId>
-                <artifactId>sharding-transaction-2pc-xa</artifactId>
-                <version>${sharding-sphere.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.shardingsphere</groupId>
-                <artifactId>sharding-transaction-spring</artifactId>
-                <version>${sharding-sphere.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.shardingsphere</groupId>
-                <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
-                <version>${sharding-sphere.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.shardingsphere</groupId>
-                <artifactId>sharding-transaction-spring-boot-starter</artifactId>
-                <version>${sharding-sphere.version}</version>
-            </dependency>
-
 
             <!--spring 相关 -->
             <dependency>
@@ -142,24 +100,33 @@
                 <version>${aspectjweaver.version}</version>
             </dependency>
 
-            <!--spring boot starter-->
             <dependency>
-                <groupId>io.shardingsphere</groupId>
-                <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
-                <version>${sharding-sphere.version}</version>
+                <groupId>org.apache.dubbo</groupId>
+                <artifactId>dubbo</artifactId>
+                <version>${dubbo.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>servlet-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
-            <dependency>
-                <groupId>org.mybatis.spring.boot</groupId>
-                <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>${mybatis-spring.version}</version>
-            </dependency>
+
 
             <!--日志 -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.12</version>
+                <version>1.7.25</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -175,8 +142,61 @@
                 <scope>test</scope>
             </dependency>
 
+            <!-- json -->
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.56</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
+
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- Dubbo Spring Boot Starter -->
+        <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo-spring-boot-starter</artifactId>
+            <version>2.7.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-x-discovery</artifactId>
+            <version>4.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+            <version>3.4.5</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+    </dependencies>
 
     <build>
         <pluginManagement>

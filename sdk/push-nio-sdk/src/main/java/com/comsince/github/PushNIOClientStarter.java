@@ -18,7 +18,7 @@ public class PushNIOClientStarter {
 //            sendConnect("172.16.177.107",6789);
 //            sendConnect("172.16.176.23",6789);
 //            sendConnect("172.16.176.25",6789);
-            sendConnect("127.0.0.1",9945);
+            sendConnect("127.0.0.1",6789);
         }
 
     }

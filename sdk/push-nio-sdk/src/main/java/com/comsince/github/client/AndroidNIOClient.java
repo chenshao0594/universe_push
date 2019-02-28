@@ -146,13 +146,14 @@ public class AndroidNIOClient implements ConnectCallback,DataCallback,CompletedC
 
     @Override
     public void onCompleted(Exception ex) {
-        if(pushMessageCallback != null){
-            pushMessageCallback.receiveException(ex);
-        }
         if(ex != null) {
             log.e("onCompleted ",ex);
         }
         isConnected = false;
+
+        if(pushMessageCallback != null){
+            pushMessageCallback.receiveException(ex);
+        }
     }
 
 

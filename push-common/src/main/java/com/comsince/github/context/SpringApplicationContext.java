@@ -30,6 +30,19 @@ public class SpringApplicationContext implements ApplicationContextAware{
         }
     }
 
+    public static Object getBeanByType(Class cls){
+        if(pushApplicationContext != null){
+            try {
+                return pushApplicationContext.getBean(cls);
+            }catch (Exception e){
+                logger.error("getbean",e);
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         logger.info("init applicationContext");
