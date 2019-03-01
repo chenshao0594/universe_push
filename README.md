@@ -10,6 +10,12 @@
 ## 准备工作
 为了脚本能够正常工作,请先在你的服务器建立如下目录`/opt/boot`,这个是脚本自动查找spring boot工程的目录,该目录下存放所有spring boot工程,具体工程目录结构如下：
 
+## 依赖组件
+* __redis__  
+  `push-connector`集群模式下需要进行消息推送，利用redis的`sub/pub`进行消息的订阅与发布进而进行全局推送
+* __zookeeper__  
+  dubbo使用了zookeeper作为注册中心，因此需要安装zookeeper
+  
 ## 启动停止服务
 
 > 例如push-sub的启动方式，其他类同
@@ -23,6 +29,14 @@
 
 ## SpringBoot Dubbo服务启动
 由于dubbo严格遵守服务依赖启动顺序，请安装顺序启动如下服务
+
+* `application.properties`配置`redis`和`zookeeper`地址
+
+> 这里没用使用诸如`nacos`,`apollo`外部的配置中心，需要自己手动修改
+
+```properties
+push.redis.address=redis://172.16.46.213:6379
+```
 
 * 运行`mvn clean package -Dmaven.test.skip=true` 打包springboot jar 
 
@@ -73,6 +87,13 @@
 └── lib
    └── sping-boot-web-push-group-1.0.0-SNAPSHOT.jar //可运行的jar
 ```
+
+## 推送SDK
+为了方便用户快速接入消息推送系统，特提供如下SDK
+* __AIO-PUSHSDK__
+* __NIO-PUSHSDK__
+
+* 基于NIO-PUHSDK的`AndroidPushDemo`,这个demo主要演示重定向，心跳，消息推送，群组消息的基本功能
 
 # 基础架构
 
