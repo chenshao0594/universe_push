@@ -37,7 +37,7 @@
         <module>tio-core</module>
         <module>push-common</module>
         <module>push-stub</module>
-        <module>sdk</module>
+        <module>push-sdk</module>
 
         <module>spring-boot-dubbo-push-connector</module>
         <module>spring-boot-dubbo-push-subscribe</module>
