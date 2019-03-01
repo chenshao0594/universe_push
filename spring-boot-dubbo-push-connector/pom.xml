@@ -9,7 +9,7 @@
 
   <parent>
     <groupId>com.comsince.github</groupId>
-    <artifactId>push</artifactId>
+    <artifactId>universe_push</artifactId>
     <version>1.0.0</version>
   </parent>
 
