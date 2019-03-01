@@ -1,8 +1,5 @@
 package com.comsince.github.model;
 
-
-import com.alibaba.fastjson.JSON;
-
 import java.util.List;
 
 /**
@@ -36,18 +33,5 @@ public class PushTokenRequest {
                 "message='" + message + '\'' +
                 ", tokens=" + tokens +
                 '}';
-    }
-
-    public static void main(String[] args){
-        String tokenRequest = "\n" +
-                "{\n" +
-                "    \"message\":\"推送消息\",\n" +
-                "    \"tokens\":[\n" +
-                "        \"193de2250cd2983685c3abe1a7a809b9\",\n" +
-                "        \"74c191b995bc7ea0dcaf0950065dc011\"\n" +
-                "    ]\n" +
-                "}\n";
-        PushTokenRequest pushTokenRequest = (PushTokenRequest) JSON.parseObject(tokenRequest,PushTokenRequest.class);
-        System.out.println(pushTokenRequest);
     }
 }

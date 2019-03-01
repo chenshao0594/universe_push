@@ -2,6 +2,7 @@ package com.comsince.github.process;
 
 import com.comsince.github.PushPacket;
 import com.comsince.github.Signal;
+import com.comsince.github.configuration.PushCommonConfiguration;
 import com.comsince.github.context.SpringApplicationContext;
 import com.comsince.github.sub.SubResponse;
 import com.comsince.github.sub.SubResponsePacket;
@@ -23,7 +24,8 @@ public class SubResponseProcessor implements MessageProcessor {
         String token = channelContext.getBsId();
         if(!StringUtils.isNotBlank(token)){
             logger.info("channel connect generate token fail so regenerate token");
-            SubService subService = (SubService) SpringApplicationContext.getBean("subService");
+            PushCommonConfiguration pushServerConfiguration = (PushCommonConfiguration) SpringApplicationContext.getBean("pushServerConfiguration");
+            SubService subService = pushServerConfiguration.subService();
             if(subService == null){
                 token = new DefaultTioUuid().uuid();
             } else {
