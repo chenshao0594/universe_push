@@ -42,7 +42,7 @@
         <module>spring-boot-dubbo-push-connector</module>
         <module>spring-boot-dubbo-push-subscribe</module>
         <module>spring-boot-web-push-api</module>
-        <module>sping-boot-web-push-group</module>
+        <module>spring-boot-web-push-group</module>
 
     </modules>
 

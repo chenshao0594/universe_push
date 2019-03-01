@@ -7,8 +7,61 @@
 
 # 部署说明
 
+## 准备工作
+为了脚本能够正常工作,请先在你的服务器建立如下目录`/opt/boot`,这个是脚本自动查找spring boot工程的目录,该目录下存放所有spring boot工程,具体工程目录结构如下：
+
+## SpringBoot Dubbo服务启动
+由于dubbo严格遵守服务依赖启动顺序，请安装顺序启动如下服务
+
+* 运行`mvn clean package -Dmaven.test.skip=true` 打包springboot jar 
+
 * 启动`spring-boot-dubbo-push-subscribe`订阅服务
+```shell
+/opt/boot/push-sub
+├── jvm.ini
+├── push-ap //可执行启动脚本
+└── log
+   └── push-api.log //存放日志
+└── lib
+   └── push-api-1.0-SNAPSHOT.jar //可运行的jar
+```
+
 * 启动`spring-boot-dubbo-push-connector`链接服务
+
+```shell
+/opt/boot/push-api
+├── jvm.ini
+├── push-connector //可执行启动脚本
+└── log
+   └── push-connector.log //存放日志
+└── lib
+   └── push-connector-1.0-SNAPSHOT.jar //可运行的jar
+```
+
+## SpringBoot web项目
+
+* 启动`spring-boot-web-push-api`开放推送服务
+```shell
+/opt/boot/push-sub
+├── jvm.ini
+├── push-api //可执行启动脚本
+└── log
+   └── push-api.log //存放日志
+└── lib
+   └── push-api-1.0-SNAPSHOT.jar //可运行的jar
+```
+
+
+* 启动`sping-boot-web-push-group`群组服务
+```shell
+/opt/boot/push-sub
+├── jvm.ini
+├── push-group //可执行启动脚本
+└── log
+   └── push-group.log //存放日志
+└── lib
+   └── sping-boot-web-push-group-1.0.0-SNAPSHOT.jar //可运行的jar
+```
 
 # 基础架构
 

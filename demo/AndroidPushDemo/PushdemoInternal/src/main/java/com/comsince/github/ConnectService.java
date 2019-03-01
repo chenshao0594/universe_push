@@ -152,7 +152,7 @@ public class ConnectService implements PushMessageCallback,Callback {
         PushDemoApplication.sendMessage("redirect "+redirect);
         RedirectResponse redirectResponse = Json.toBean(redirect,RedirectResponse.class);
         NodeInfo nodeInfo = redirectResponse.getNodeInfos().get(new Random().nextInt(3));
-        nodeInfo = new NodeInfo("172.16.46.201",6789);
+        //nodeInfo = new NodeInfo("172.16.46.201",6789);
         //androidNIOClient = new AndroidNIOClient("172.16.177.107",6789);
         PushDemoApplication.sendMessage("connect node "+nodeInfo.getIp()+":"+nodeInfo.getPort());
         androidNIOClient = new AndroidNIOClient(nodeInfo.getIp(),nodeInfo.getPort());

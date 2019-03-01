@@ -3,7 +3,7 @@
 JAVA_HOME=/opt/jdk1.8.0_131
 
 APP_NAME=$(basename "$0")
-APP_DIR=/opt/web/${APP_NAME}
+APP_DIR=/opt/boot/${APP_NAME}
 APP_VERSION_FILE=${APP_DIR}/version
 APP_LIB=${APP_DIR}/lib
 JVM_INI=${APP_DIR}/jvm.ini
@@ -41,10 +41,10 @@ do_start()
     JAVA_HOME=/data/java
   fi
 
-  mkdir -p /opt/web/$APP_NAME/logs
+  mkdir -p /opt/boot/$APP_NAME/logs
 
   COMMAND="$JAVA_HOME/bin/java $JVM_OPTIONS -jar $APP_LIB/$JAR_NAME"
-  (${COMMAND} 2>&1 1> "/opt/web/$APP_NAME/logs/$APP_NAME.log" &) > /dev/null
+  (${COMMAND} 2>&1 1> "/opt/boot/$APP_NAME/logs/$APP_NAME.log" &) > /dev/null
 
   sleep 1 #避免进程启动太慢,导致无法进入后续循环
 
