@@ -7,6 +7,8 @@
 
 # 部署说明
 
+![image](attachment/push-universe.png)
+
 ## 准备工作
 为了脚本能够正常工作,请先在你的服务器建立如下目录`/opt/boot`,这个是脚本自动查找spring boot工程的目录,该目录下存放所有spring boot工程,具体工程目录结构如下：
 
@@ -39,6 +41,8 @@ push.redis.address=redis://172.16.46.213:6379
 ```
 
 * 运行`mvn clean package -Dmaven.test.skip=true` 打包springboot jar 
+
+> 以下服务如果用户量增加，都可以集群部署
 
 * 启动`spring-boot-dubbo-push-subscribe`订阅服务
 ```shell
@@ -90,15 +94,12 @@ push.redis.address=redis://172.16.46.213:6379
 
 ## 推送SDK
 为了方便用户快速接入消息推送系统，特提供如下SDK
-* __AIO-PUSHSDK__
-* __NIO-PUSHSDK__
 
-* 基于NIO-PUHSDK的`AndroidPushDemo`,这个demo主要演示重定向，心跳，消息推送，群组消息的基本功能
+* __[AIO-PUSHSDK](push-sdk/push-aio-sdk)__
+* __[NIO-PUSHSDK](push-sdk/push-nio-sdk)__
+* 基于NIO-PUHSDK的[AndroidPushDemo](demo/AndroidPushDemo),这个demo主要演示重定向，心跳，消息推送，群组消息的基本功能
 
 # 基础架构
-
-![image](attachment/push-universe.png)
-
 ## Push-connector
 ### 基本功能
 * 提供集群链接管理的能力
