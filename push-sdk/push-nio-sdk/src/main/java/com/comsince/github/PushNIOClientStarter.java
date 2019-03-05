@@ -14,7 +14,7 @@ public class PushNIOClientStarter {
 
 
     public static void main(String[] args){
-        for(int i=0;i<1;i++){
+        for(int i=0;i<1500;i++){
             sendConnect("172.16.177.107",6789);
             sendConnect("172.16.176.23",6789);
             sendConnect("172.16.176.25",6789);

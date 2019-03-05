@@ -16,6 +16,7 @@
   <modules>
     <module>push-aio-sdk</module>
     <module>push-nio-sdk</module>
+    <module>sofa-bolt-sdk</module>
   </modules>
 
   <dependencies>
