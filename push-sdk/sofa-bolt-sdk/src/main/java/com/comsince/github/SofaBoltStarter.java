@@ -37,8 +37,8 @@ public class SofaBoltStarter {
                 try {
                     //Connection connection = client.createConnection(addr);
                     logger.info("start sub");
-                    //client.invokeSyncSub(addr,new RequestPushCommand(null, Signal.SUB));
-                     client.onewaySub(addr, new RequestPushCommand(null, Signal.SUB));
+                    client.invokeSyncSub(addr,new RequestPushCommand(null, Signal.SUB));
+                     //client.onewaySub(addr, new RequestPushCommand(null, Signal.SUB));
                 } catch (RemotingException e) {
                     String errMsg = "RemotingException caught in oneway!";
                     logger.error(errMsg, e);

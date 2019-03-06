@@ -51,11 +51,13 @@ public class ConnectService implements PushMessageCallback,Callback {
 
     public void connect(){
         if(androidNIOClient != null){
+            cancelHeartTimer();
             androidNIOClient.connect();
         }
     }
 
     public void stop(){
+        cancelHeartTimer();
         alarmWrapper.stop();
         androidNIOClient.close();
     }
@@ -144,6 +146,12 @@ public class ConnectService implements PushMessageCallback,Callback {
     @Override
     public void onFailure(Call call, IOException e) {
 
+    }
+
+    private void cancelHeartTimer(){
+        if(heartbeatTimer != null){
+            alarmWrapper.cancel(heartbeatTimer);
+        }
     }
 
     @Override

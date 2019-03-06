@@ -13,8 +13,8 @@ import io.netty.channel.ChannelHandlerContext;
 public class PushHeartBeatTrigger implements HeartbeatTrigger {
     @Override
     public void heartbeatTriggered(ChannelHandlerContext ctx) throws Exception {
-//        int interval = 1000;
-//        String heartInterval = "{\"interval\":"+interval+"}";
-//        ctx.channel().writeAndFlush(new RequestPushCommand(heartInterval, Signal.PING));
+        int interval = 15000;
+        String heartInterval = "{\"interval\":"+interval+"}";
+        ctx.channel().writeAndFlush(new RequestPushCommand(heartInterval, Signal.PING));
     }
 }

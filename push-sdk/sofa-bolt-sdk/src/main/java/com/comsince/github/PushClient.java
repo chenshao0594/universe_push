@@ -76,8 +76,8 @@ public class PushClient extends AbstractConfigurableInstance {
         pushRemoting.oneway(address,subscribeCommand,null);
     }
 
-    public void invokeSyncSub(String address, RequestPushCommand subscribeCommand) throws RemotingException, InterruptedException {
-        pushRemoting.invokeSync(address,subscribeCommand,null,3000);
+    public Object invokeSyncSub(String address, RequestPushCommand subscribeCommand) throws RemotingException, InterruptedException {
+        return pushRemoting.invokeSync(address,subscribeCommand,null,3000);
     }
 
 
