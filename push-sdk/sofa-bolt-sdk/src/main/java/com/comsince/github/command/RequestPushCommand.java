@@ -6,23 +6,29 @@ import com.alipay.remoting.ProtocolCode;
 import com.alipay.remoting.config.switches.ProtocolSwitch;
 import com.alipay.remoting.exception.DeserializationException;
 import com.alipay.remoting.exception.SerializationException;
+import com.alipay.remoting.util.IDGenerator;
+import com.comsince.github.protocol.PushProtocol;
 
 /**
  * @author comsicne
  *         Copyright (c) [2019] [Meizu.inc]
- * @Time 19-3-5 下午5:39
+ * @Time 19-3-6 上午10:11
  **/
-public class HeartBeatCommand extends PushCommand{
+public class RequestPushCommand extends PushCommand{
 
-    private Object heartBeatRequest;
+    private Object request;
 
-    public HeartBeatCommand(Object heartBeatRequest) {
-        this.heartBeatRequest = heartBeatRequest;
+    private int id;
+
+    public RequestPushCommand(Object request, Signal signal) {
+        super(signal);
+        this.request = request;
+        this.setId(IDGenerator.nextId());
     }
 
     @Override
     public ProtocolCode getProtocolCode() {
-        return null;
+        return ProtocolCode.fromBytes(PushProtocol.PROTOCOL_CODE);
     }
 
     @Override
@@ -32,7 +38,11 @@ public class HeartBeatCommand extends PushCommand{
 
     @Override
     public int getId() {
-        return 0;
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
@@ -51,22 +61,21 @@ public class HeartBeatCommand extends PushCommand{
     }
 
     @Override
-    public void serialize() throws SerializationException {
+    public void deserializeContent(InvokeContext invokeContext) throws DeserializationException {
 
     }
 
     @Override
-    public void deserialize() throws DeserializationException {
-
+    public void serializeHeader(InvokeContext invokeContext) throws SerializationException {
+        if(signal != null){
+            setSignal(signal);
+        }
     }
 
     @Override
     public void serializeContent(InvokeContext invokeContext) throws SerializationException {
-
-    }
-
-    @Override
-    public void deserializeContent(InvokeContext invokeContext) throws DeserializationException {
-
+        if(request != null){
+            setContent(request.toString().getBytes());
+        }
     }
 }

@@ -5,19 +5,24 @@ import com.alipay.remoting.InvokeContext;
 import com.alipay.remoting.ProtocolCode;
 import com.alipay.remoting.config.switches.ProtocolSwitch;
 import com.alipay.remoting.exception.DeserializationException;
-import com.alipay.remoting.exception.SerializationException;
+
+import java.io.UnsupportedEncodingException;
 
 /**
  * @author comsicne
  *         Copyright (c) [2019] [Meizu.inc]
- * @Time 19-3-5 下午5:36
+ * @Time 19-3-6 下午2:25
  **/
-public class SubscribeCommand extends PushCommand{
+public class ResponsePushCommand extends PushCommand{
 
-    private Object requestObject;
+    public String response;
 
-    public SubscribeCommand(Object requestObject) {
-        this.requestObject = requestObject;
+    public ResponsePushCommand(byte[] header) {
+        super(header);
+    }
+
+    public ResponsePushCommand(Signal signal) {
+        super(signal);
     }
 
     @Override
@@ -51,22 +56,18 @@ public class SubscribeCommand extends PushCommand{
     }
 
     @Override
-    public void serialize() throws SerializationException {
-
-    }
-
-    @Override
-    public void deserialize() throws DeserializationException {
-
-    }
-
-    @Override
-    public void serializeContent(InvokeContext invokeContext) throws SerializationException {
-
-    }
-
-    @Override
     public void deserializeContent(InvokeContext invokeContext) throws DeserializationException {
+        try {
+            response = new String(content,"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
 
+    @Override
+    public String toString() {
+        return "ResponsePushCommand{" +
+                "response='" + response + '\'' +
+                '}';
     }
 }

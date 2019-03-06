@@ -19,6 +19,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PushConnectFactory extends DefaultConnectionFactory {
     public PushConnectFactory(ConcurrentHashMap<String, UserProcessor<?>> userProcessors,
                               ConfigurableInstance configInstance) {
-        super(new PushCodec(), null, new PushHandler(userProcessors), configInstance);
+        super(new PushCodec(), new HeartbeatHandler(), new PushHandler(userProcessors), configInstance);
     }
 }

@@ -7,8 +7,7 @@ import com.alipay.remoting.connection.ConnectionFactory;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.log.BoltLoggerFactory;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
-import com.comsince.github.command.PushCommand;
-import com.comsince.github.command.SubscribeCommand;
+import com.comsince.github.command.RequestPushCommand;
 import org.slf4j.Logger;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -62,6 +61,9 @@ public class PushClient extends AbstractConfigurableInstance {
     }
 
     public void init(){
+        if (this.addressParser == null) {
+            this.addressParser = new PushAddressParser();
+        }
         this.connectionManager.init();
         this.pushRemoting = new ClientPushRemoting(new PushCommandFactory(), this.addressParser,
                 this.connectionManager);
@@ -70,8 +72,19 @@ public class PushClient extends AbstractConfigurableInstance {
     /**
      * 订阅请求
      * */
-    public void onewaySub(String address, SubscribeCommand subscribeCommand) throws RemotingException, InterruptedException {
+    public void onewaySub(String address, RequestPushCommand subscribeCommand) throws RemotingException, InterruptedException {
         pushRemoting.oneway(address,subscribeCommand,null);
+    }
+
+    public void invokeSyncSub(String address, RequestPushCommand subscribeCommand) throws RemotingException, InterruptedException {
+        pushRemoting.invokeSync(address,subscribeCommand,null,3000);
+    }
+
+
+    public Connection createConnection(String address) throws RemotingException, InterruptedException {
+        Url url = this.addressParser.parse(address);
+        Connection connection = pushRemoting.connectionManager.getAndCreateIfAbsent(url);
+        return connection;
     }
 
 

@@ -1,6 +1,9 @@
 package com.comsince.github.command;
 
+import com.alipay.remoting.InvokeContext;
 import com.alipay.remoting.RemotingCommand;
+import com.alipay.remoting.exception.DeserializationException;
+import com.alipay.remoting.exception.SerializationException;
 
 /**
  * @author comsicne
@@ -8,13 +11,35 @@ import com.alipay.remoting.RemotingCommand;
  * @Time 19-3-5 下午5:09
  **/
 public abstract class PushCommand implements RemotingCommand{
-
+    public static final int LENGTH = 6;
+    public static final int VERSION = 1;
 
     protected byte[] header;
 
+    protected byte[] content;
 
-    public byte[] getContents() {
+    protected Signal signal;
+
+    /** invoke context of each rpc command. */
+    private InvokeContext     invokeContext;
+
+    public PushCommand(byte[] header) {
+        this.header = header;
+    }
+
+    public PushCommand(Signal signal) {
+        header = new byte[LENGTH];
+        header[0] = (byte)0xf8;  //flag
+        header[1] = VERSION;   //version
+        setSignal(signal);
+    }
+
+    public byte[] getHeader() {
         return header;
+    }
+
+    public void setHeader(byte[] header){
+        this.header = header;
     }
 
     public void setVersion(int version) {
@@ -49,4 +74,44 @@ public abstract class PushCommand implements RemotingCommand{
                 getSignal() != Signal.NONE;
     }
 
+    public void setContent(byte[] content) {
+        if (content != null) {
+            this.content = content;
+            setContentLength(content.length);
+        } else {
+            setContentLength(0);
+        }
+    }
+
+    public byte[] getContent(){
+        return content;
+    }
+
+    @Override
+    public void serialize() throws SerializationException {
+        serializeHeader(invokeContext);
+        serializeContent(invokeContext);
+    }
+
+    @Override
+    public void deserialize() throws DeserializationException {
+       deserializeContent(invokeContext);
+    }
+
+    /**
+     * Serialize the header.
+     *
+     * @throws Exception
+     */
+    public void serializeHeader(InvokeContext invokeContext) throws SerializationException {
+    }
+
+    /**
+     * Serialize the content.
+     *
+     * @throws Exception
+     */
+    @Override
+    public void serializeContent(InvokeContext invokeContext) throws SerializationException {
+    }
 }

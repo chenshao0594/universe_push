@@ -2,6 +2,7 @@ package com.comsince.github;
 
 import com.alipay.remoting.*;
 import com.alipay.remoting.exception.RemotingException;
+import com.alipay.remoting.rpc.DefaultInvokeFuture;
 import com.comsince.github.command.PushCommand;
 
 /**
@@ -24,8 +25,17 @@ public class ClientPushRemoting extends PushRemoting{
 
 
     @Override
+    public Object invokeSync(Url url, PushCommand request, InvokeContext invokeContext,int timeoutMillis) throws RemotingException, InterruptedException {
+        final Connection conn = getConnectionAndInitInvokeContext(url, invokeContext);
+        this.connectionManager.check(conn);
+        return this.invokeSync(conn,request,invokeContext,timeoutMillis);
+    }
+
+
+    @Override
     protected InvokeFuture createInvokeFuture(RemotingCommand request, InvokeContext invokeContext) {
-        return null;
+        return new DefaultInvokeFuture(request.getId(), null, null, request.getProtocolCode()
+                .getFirstByte(), this.getCommandFactory(), invokeContext);
     }
 
     @Override

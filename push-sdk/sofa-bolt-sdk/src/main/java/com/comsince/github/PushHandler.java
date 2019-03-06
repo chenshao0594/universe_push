@@ -2,9 +2,12 @@ package com.comsince.github;
 
 import com.alipay.remoting.*;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
+import com.comsince.github.protocol.PushProtocol;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,6 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
  **/
 @ChannelHandler.Sharable
 public class PushHandler extends ChannelInboundHandlerAdapter {
+
+    static Logger logger = LoggerFactory.getLogger(PushHandler.class);
     private boolean                                     serverSide;
 
     private ConcurrentHashMap<String, UserProcessor<?>> userProcessors;
@@ -36,7 +41,8 @@ public class PushHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        ProtocolCode protocolCode = ctx.channel().attr(Connection.PROTOCOL).get();
+        System.out.println("receive message "+msg);
+        ProtocolCode protocolCode = ProtocolCode.fromBytes(PushProtocol.PROTOCOL_VERSION_1);
         Protocol protocol = ProtocolManager.getProtocol(protocolCode);
         protocol.getCommandHandler().handleCommand(
                 new RemotingContext(ctx, new InvokeContext(), serverSide, userProcessors), msg);
