@@ -2,12 +2,7 @@ package com.comsince.github.utils;
 
 import java.security.MessageDigest;
 
-/**
- * @class       MD5Util
- * @author      xiawen <xiawen@meizu.com>
- * @date        2017/10/16 19:44
- * @version     1.0
- */
+
 public class MD5Util {
 	private final static String[] hexDigits = {
 	        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
