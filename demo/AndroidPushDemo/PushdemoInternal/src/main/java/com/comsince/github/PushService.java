@@ -21,6 +21,7 @@ public class PushService extends Service implements MessageCallback{
 
     ConnectService connectService;
     GroupService groupService;
+    NetworkService networkService;
 
     @Override
     public void onCreate() {
@@ -28,6 +29,7 @@ public class PushService extends Service implements MessageCallback{
         connectService = new ConnectService(this,"push-connector");
         connectService.setMessageCallback(this);
         groupService = new GroupService(connectService);
+        networkService  = new NetworkService(this,connectService);
     }
 
     @Override
@@ -35,6 +37,7 @@ public class PushService extends Service implements MessageCallback{
         DebugLogger.i("LocalService", "Received start id " + startId + ": " + intent);
         switchIntent(intent);
         connectService.connect();
+        networkService.start();
         return START_NOT_STICKY;
     }
 
@@ -45,6 +48,7 @@ public class PushService extends Service implements MessageCallback{
         super.onDestroy();
         DebugLogger.i(START_FOREGROUD_SERVICE,"close push channel");
         connectService.stop();
+        networkService.stop();
     }
     @Override
     public IBinder onBind(Intent intent) {
