@@ -29,10 +29,10 @@ public class PushConnectionEventHandler extends ConnectionEventHandler {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         logger.info("channelInactive "+ctx.name());
-       // Connection conn = ctx.channel().attr(Connection.CONNECTION).get();
-//        if (conn != null) {
-//            this.getConnectionManager().remove(conn);
-//        }
+        Connection conn = ctx.channel().attr(Connection.CONNECTION).get();
+        if (conn != null) {
+            this.getConnectionManager().remove(conn);
+        }
         super.channelInactive(ctx);
     }
 }

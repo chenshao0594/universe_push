@@ -7,6 +7,7 @@ import com.alipay.remoting.config.switches.ProtocolSwitch;
 import com.alipay.remoting.exception.DeserializationException;
 import com.alipay.remoting.exception.SerializationException;
 import com.alipay.remoting.util.IDGenerator;
+import com.comsince.github.protocol.PushCommandCode;
 import com.comsince.github.protocol.PushProtocol;
 
 /**
@@ -18,12 +19,11 @@ public class RequestPushCommand extends PushCommand{
 
     private Object request;
 
-    private int id;
-
     public RequestPushCommand(Object request, Signal signal) {
         super(signal);
+        this.commandCode = PushCommandCode.PUSH_REQUEST;
         this.request = request;
-        this.setId(IDGenerator.nextId());
+        this.setId(signal.ordinal());
     }
 
     @Override
@@ -33,7 +33,7 @@ public class RequestPushCommand extends PushCommand{
 
     @Override
     public CommandCode getCmdCode() {
-        return null;
+        return commandCode;
     }
 
     @Override

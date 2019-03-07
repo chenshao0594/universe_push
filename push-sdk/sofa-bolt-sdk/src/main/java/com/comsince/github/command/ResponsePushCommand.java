@@ -5,6 +5,7 @@ import com.alipay.remoting.InvokeContext;
 import com.alipay.remoting.ProtocolCode;
 import com.alipay.remoting.config.switches.ProtocolSwitch;
 import com.alipay.remoting.exception.DeserializationException;
+import com.comsince.github.protocol.PushCommandCode;
 
 import java.io.UnsupportedEncodingException;
 
@@ -19,6 +20,7 @@ public class ResponsePushCommand extends PushCommand{
 
     public ResponsePushCommand(byte[] header) {
         super(header);
+        this.commandCode = PushCommandCode.PUSH_RESPONSE;
     }
 
     public ResponsePushCommand(Signal signal) {
@@ -32,13 +34,14 @@ public class ResponsePushCommand extends PushCommand{
 
     @Override
     public CommandCode getCmdCode() {
-        return null;
+        return commandCode;
     }
 
     @Override
     public int getId() {
-        return 0;
+        return getSignal().ordinal();
     }
+
 
     @Override
     public InvokeContext getInvokeContext() {

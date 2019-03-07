@@ -34,7 +34,7 @@ public class ClientPushRemoting extends PushRemoting{
 
     @Override
     protected InvokeFuture createInvokeFuture(RemotingCommand request, InvokeContext invokeContext) {
-        return new DefaultInvokeFuture(request.getId(), null, null, request.getProtocolCode()
+        return new PushInvokeFuture(request.getId(), null, null, request.getProtocolCode()
                 .getFirstByte(), this.getCommandFactory(), invokeContext);
     }
 

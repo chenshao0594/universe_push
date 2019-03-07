@@ -1,5 +1,6 @@
 package com.comsince.github.command;
 
+import com.alipay.remoting.CommandCode;
 import com.alipay.remoting.InvokeContext;
 import com.alipay.remoting.RemotingCommand;
 import com.alipay.remoting.exception.DeserializationException;
@@ -13,6 +14,10 @@ import com.alipay.remoting.exception.SerializationException;
 public abstract class PushCommand implements RemotingCommand{
     public static final int LENGTH = 6;
     public static final int VERSION = 1;
+
+    protected CommandCode commandCode;
+
+    protected int id;
 
     protected byte[] header;
 
