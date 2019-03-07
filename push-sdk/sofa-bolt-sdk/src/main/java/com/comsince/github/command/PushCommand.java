@@ -28,6 +28,10 @@ public abstract class PushCommand implements RemotingCommand{
     /** invoke context of each rpc command. */
     private InvokeContext     invokeContext;
 
+    public PushCommand(){
+
+    }
+
     public PushCommand(byte[] header) {
         this.header = header;
     }
