@@ -26,7 +26,7 @@ public class AndroidNIOClient implements ConnectCallback,DataCallback,CompletedC
     private int port;
     private Cancellable cancellable;
 
-    volatile boolean isConnected = false;
+    volatile ConnectStatus connectStatus = ConnectStatus.DISCONNECT;
 
     Header receiveHeader = null;
     ByteBufferList receiveBuffer = new ByteBufferList();
@@ -44,29 +44,41 @@ public class AndroidNIOClient implements ConnectCallback,DataCallback,CompletedC
     }
 
     public void connect(){
-        if(!isConnected){
-            cancellable = asyncServer.connectSocket(host,port,this);
-        }
+        asyncServer.post(new Runnable() {
+            @Override
+            public void run() {
+                log.i("current connect status "+connectStatus);
+                if(connectStatus == ConnectStatus.DISCONNECT){
+                    connectStatus = ConnectStatus.CONNECTING;
+                    cancellable = asyncServer.connectSocket(host,port,AndroidNIOClient.this);
+                }
+            }
+        });
     }
 
     public void close(){
         if(cancellable != null){
             cancellable.cancel();
         }
+        if(asyncSocket!= null){
+            asyncSocket.close();
+        }
     }
 
-    private void sub(){
-        //start register
-        final Header header = new Header();
-        header.setSignal(Signal.SUB);
-        header.setLength(0);
+    public void sub(){
+        sub("");
+    }
 
-        Util.writeAll(asyncSocket, header.getContents(), new CompletedCallback() {
+    public void sub(String uid){
+        //start register
+        String tokenJson = "{\"uid\":\""+uid+"\"}";
+        sendMessage(Signal.SUB, tokenJson, new CompletedCallback() {
             @Override
             public void onCompleted(Exception ex) {
                 log.e("write completed",ex);
             }
         });
+
     }
 
     /**
@@ -104,23 +116,7 @@ public class AndroidNIOClient implements ConnectCallback,DataCallback,CompletedC
         });
     }
 
-    @Override
-    public void onConnectCompleted(Exception ex, AsyncSocket socket) {
-        //ex为空，表示链接正常
-        if(ex != null){
-            if(pushMessageCallback != null){
-                pushMessageCallback.receiveException(ex);
-            }
-            log.e("connect failed",ex);
-            return;
-        }
 
-        isConnected = true;
-        this.asyncSocket = socket;
-        asyncSocket.setDataCallback(this);
-        asyncSocket.setClosedCallback(this);
-        sub();
-    }
 
     @Override
     public void onDataAvailable(DataEmitter emitter, ByteBufferList bb) {
@@ -145,11 +141,35 @@ public class AndroidNIOClient implements ConnectCallback,DataCallback,CompletedC
     }
 
     @Override
+    public void onConnectCompleted(Exception ex, AsyncSocket socket) {
+        //ex为空，表示链接正常
+        if(ex != null){
+            if(pushMessageCallback != null){
+                pushMessageCallback.receiveException(ex);
+            }
+            connectStatus = ConnectStatus.DISCONNECT;
+            log.e("connect failed",ex);
+            return;
+        }
+
+
+        connectStatus = ConnectStatus.CONNECTED;
+        this.asyncSocket = socket;
+        asyncSocket.setDataCallback(this);
+        asyncSocket.setClosedCallback(this);
+
+        if(pushMessageCallback != null){
+            pushMessageCallback.onConnected();
+        }
+        //sub();
+    }
+
+    @Override
     public void onCompleted(Exception ex) {
         if(ex != null) {
             log.e("onCompleted ",ex);
         }
-        isConnected = false;
+        connectStatus = ConnectStatus.DISCONNECT;
 
         if(pushMessageCallback != null){
             pushMessageCallback.receiveException(ex);

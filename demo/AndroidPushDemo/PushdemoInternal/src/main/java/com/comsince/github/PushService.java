@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.IBinder;
 
 import com.comsince.github.push.Signal;
+import com.comsince.github.utils.PreferenceUtil;
 import com.meizu.cloud.pushinternal.DebugLogger;
 
 /**
@@ -36,7 +37,7 @@ public class PushService extends Service implements MessageCallback{
     public int onStartCommand(Intent intent, int flags, int startId) {
         DebugLogger.i("LocalService", "Received start id " + startId + ": " + intent);
         switchIntent(intent);
-        connectService.connect();
+        connectService.start();
         networkService.start();
         return START_NOT_STICKY;
     }
@@ -79,7 +80,7 @@ public class PushService extends Service implements MessageCallback{
     @Override
     public void receiveMessage(Signal signal, String message) {
          if(Signal.SUB == signal){
-
+             PreferenceUtil.putToken(this,connectService.getToken());
          }
     }
 

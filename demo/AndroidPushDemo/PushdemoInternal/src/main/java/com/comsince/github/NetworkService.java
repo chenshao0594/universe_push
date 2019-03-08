@@ -103,13 +103,13 @@ public class NetworkService {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            DebugLogger.d(tag, "on receive network changed");
+            DebugLogger.i(tag, "on receive network changed");
             Network.Info info = Network.info(context);
 
             if(info.isConnected){
                 connectService.connect();
             } else {
-                connectService.stop();
+                connectService.disConnect();
             }
 
         }

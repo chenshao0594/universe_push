@@ -63,11 +63,19 @@ public class NIOClient implements ConnectCallback,DataCallback,CompletedCallback
 
     private void sub(){
         //start register
+        ByteBufferList subBuffer = new ByteBufferList();
         final Header header = new Header();
         header.setSignal(Signal.SUB);
-        header.setLength(0);
+        String tokenJson = "{\"uid\":\"test\"}";
+        header.setLength(tokenJson.getBytes().length);
 
-        Util.writeAll(asyncSocket, header.getContents(), new CompletedCallback() {
+        ByteBuffer allBuffer = ByteBufferList.obtain(Header.LENGTH + header.getLength());
+        allBuffer.put(header.getContents());
+        allBuffer.put(tokenJson.getBytes());
+        allBuffer.flip();
+        subBuffer.add(allBuffer);
+
+        Util.writeAll(asyncSocket, subBuffer, new CompletedCallback() {
             @Override
             public void onCompleted(Exception ex) {
                 log.e("write completed",ex);

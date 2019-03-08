@@ -107,6 +107,18 @@ push.redis.address=redis://172.16.46.213:6379
 * 提供消息单发的功能
 * 客户端管理服务
 
+
+## Push-Router
+### 基本功能
+* 只有在全网推送的模式下采用基于redis的发布订阅模型
+* 推送时能够根据token选择指定的push-connector直接推送
+* push-router与push-connector基于私有协议通信快速发送
+
+
+## Push-Sub
+* 对于订阅请求，消息体如果带有token则使用当前token，不再重新生成，也即是只要客户端不清除token，下次重建链接还是可以沿用先前的token
+* 对请求过来的token按照push-connector ip分组进行分组
+
 ## Push-Cache[计划中]
 ### 基本功能
 提供消息缓存服务

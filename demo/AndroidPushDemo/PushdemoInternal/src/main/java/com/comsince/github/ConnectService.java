@@ -1,6 +1,7 @@
 package com.comsince.github;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.comsince.github.alarm.AlarmWrapper;
 import com.comsince.github.alarm.Timer;
@@ -12,7 +13,9 @@ import com.comsince.github.model.NodeInfo;
 import com.comsince.github.model.RedirectResponse;
 import com.comsince.github.push.Signal;
 import com.comsince.github.utils.Json;
+import com.comsince.github.utils.PreferenceUtil;
 import com.meizu.cloud.pushinternal.DebugLogger;
+import com.meizu.cloud.pushsdk.util.MzSystemUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,7 +31,7 @@ import okhttp3.Response;
 
 public class ConnectService implements PushMessageCallback,Callback {
     public static final String TAG = "ConnectService";
-
+    Context context;
     AndroidNIOClient androidNIOClient;
     AlarmWrapper alarmWrapper;
     Timer heartbeatTimer;
@@ -40,9 +43,8 @@ public class ConnectService implements PushMessageCallback,Callback {
     OkHttpClient client = new OkHttpClient();
 
     public ConnectService(Context context,String authority){
+        this.context  = context;
         alarmWrapper = new AlarmWrapper(context,authority);
-        alarmWrapper.start();
-        redirect();
     }
 
     public void setMessageCallback(MessageCallback messageCallback){
@@ -51,15 +53,26 @@ public class ConnectService implements PushMessageCallback,Callback {
 
     public void connect(){
         if(androidNIOClient != null){
-            cancelHeartTimer();
+            DebugLogger.i(TAG,"start connect");
             androidNIOClient.connect();
         }
     }
 
-    public void stop(){
+    public void disConnect(){
         cancelHeartTimer();
-        alarmWrapper.stop();
+        cancelReconnectTimer();
         androidNIOClient.close();
+    }
+
+
+    public void start(){
+        alarmWrapper.start();
+        redirect();
+    }
+
+    public void stop(){
+        disConnect();
+        alarmWrapper.stop();
     }
 
     public String getToken(){
@@ -119,6 +132,18 @@ public class ConnectService implements PushMessageCallback,Callback {
                         }).build());
     }
 
+    @Override
+    public void onConnected() {
+        DebugLogger.i(TAG,"onConnected");
+        cancelReconnectTimer();
+        String uid = MzSystemUtils.getDeviceId(context);
+        if(TextUtils.isEmpty(uid)){
+            androidNIOClient.sub();
+        } else {
+            androidNIOClient.sub(uid);
+        }
+    }
+
     private void schedule(){
         alarmWrapper.schedule(heartbeatTimer =
                 new Timer.Builder().period((30 + 30 * interval) * 1000)
@@ -154,12 +179,20 @@ public class ConnectService implements PushMessageCallback,Callback {
         }
     }
 
+    private void cancelReconnectTimer(){
+        if(reconnectTimer != null){
+            alarmWrapper.cancel(reconnectTimer);
+        }
+    }
+
     @Override
     public void onResponse(Call call, Response response) throws IOException {
         String redirect = response.body().string();
         PushDemoApplication.sendMessage("redirect "+redirect);
         RedirectResponse redirectResponse = Json.toBean(redirect,RedirectResponse.class);
         NodeInfo nodeInfo = redirectResponse.getNodeInfos().get(new Random().nextInt(3));
+        nodeInfo = new NodeInfo("172.16.46.201",6789);
+        androidNIOClient = new AndroidNIOClient("172.16.177.107",6789);
         PushDemoApplication.sendMessage("connect node "+nodeInfo.getIp()+":"+nodeInfo.getPort());
         androidNIOClient = new AndroidNIOClient(nodeInfo.getIp(),nodeInfo.getPort());
         androidNIOClient.setPushMessageCallback(this);
