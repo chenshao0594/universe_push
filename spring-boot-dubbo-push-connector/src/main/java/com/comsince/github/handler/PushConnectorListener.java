@@ -4,7 +4,6 @@ import com.comsince.github.configuration.PushCommonConfiguration;
 import com.comsince.github.context.SpringApplicationContext;
 import com.comsince.github.sub.SubService;
 import com.comsince.github.utils.Constants;
-import org.apache.commons.lang.StringUtils;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +34,7 @@ public class PushConnectorListener implements ServerAioListener{
 
         RedissonClient redissonClient = (RedissonClient) SpringApplicationContext.getBean(Constants.REDISCLIENT_NAME);
         long onlineNum = redissonClient.getAtomicLong(Constants.ONLINE_NUM).incrementAndGet();
+        redissonClient.getMap(Constants.ONLINE_STATUS).fastPut(token,1);
         logger.info("onAfterConnected client:"+channelContext.getClientNode()+" current onlineNum "+onlineNum);
     }
 
@@ -59,8 +59,10 @@ public class PushConnectorListener implements ServerAioListener{
 
     public void onBeforeClose(ChannelContext channelContext, Throwable throwable, String s, boolean b) throws Exception {
         //重连可能出现不同channel对应同一个token这里不要用来统计当前在线token
-       long onlineNum = ((RedissonClient)SpringApplicationContext.getBean(Constants.REDISCLIENT_NAME)).getAtomicLong(Constants.ONLINE_NUM).decrementAndGet();
-       logger.info("onBeforeClose close client:"+channelContext.getClientNode()+" token:"+channelContext.getBsId()+" current onlineNum "+onlineNum);
+      RedissonClient redissonClient = (RedissonClient) SpringApplicationContext.getBean(Constants.REDISCLIENT_NAME);
+      long onlineNum = redissonClient.getAtomicLong(Constants.ONLINE_NUM).decrementAndGet();
+      redissonClient.getMap(Constants.ONLINE_STATUS).fastPut(channelContext.getBsId(),0);
+      logger.info("onBeforeClose close client:"+channelContext.getClientNode()+" token:"+channelContext.getBsId()+" current onlineNum "+onlineNum);
     }
 
 

@@ -1,6 +1,7 @@
 package com.comsince.github.controller;
 
 import com.comsince.github.model.PushResponse;
+import com.comsince.github.utils.Constants;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
@@ -34,13 +35,7 @@ public class MonitorController {
 
     @RequestMapping(value = "onlinenum")
     public PushResponse onLineNum(){
-        RMap<String,Integer> flagMap = redissonClient.getMap("online_status");
-        int onlineNum = 0;
-        for (Map.Entry<String,Integer> entry : flagMap.entrySet()){
-            if(entry.getValue() == 1){
-                onlineNum++;
-            }
-        }
+        long onlineNum = redissonClient.getAtomicLong(Constants.ONLINE_NUM).get();
         return new PushResponse(200,String.valueOf(onlineNum));
     }
 
@@ -50,7 +45,7 @@ public class MonitorController {
     }
 
     private boolean isOnline(String token){
-        RMap<String,Integer> flagMap = redissonClient.getMap("online_status");
+        RMap<String,Integer> flagMap = redissonClient.getMap(Constants.ONLINE_STATUS);
         int flag = 0;
         if(flagMap.containsKey(token)){
             flag = flagMap.get(token);

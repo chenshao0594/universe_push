@@ -31,14 +31,14 @@ public class PushService extends Service implements MessageCallback{
         connectService.setMessageCallback(this);
         groupService = new GroupService(connectService);
         networkService  = new NetworkService(this,connectService);
+        connectService.start();
+        networkService.start();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         DebugLogger.i("LocalService", "Received start id " + startId + ": " + intent);
         switchIntent(intent);
-        connectService.start();
-        networkService.start();
         return START_NOT_STICKY;
     }
 

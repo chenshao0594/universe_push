@@ -11,6 +11,8 @@ public class Constants {
      * */
     public static final String ONLINE_NUM = "online_num";
 
+    public static final String ONLINE_STATUS = "online_status";
+
     public static final String UID_TOKEN_MAP = "uid-token";
 
     public static final String REDISCLIENT_NAME = "redissonClient";
