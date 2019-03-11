@@ -14,14 +14,14 @@
     <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
     <!--for further documentation-->
     <Append>true</Append>
-    <File>../logs/jetty/push-group.log</File>
+    <File>../push-group/logs/jetty/push-group.log</File>
     <encoder>
       <pattern>
         %d{HH:mm:ss.SSS} %-5p [%t] [%c] %X{tid} - %m%n
       </pattern>
     </encoder>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>../logs/jetty/push-group.log.%d{yyyyMMdd}</fileNamePattern>
+      <fileNamePattern>../push-group/logs/jetty/push-group.log.%d{yyyyMMdd}</fileNamePattern>
     </rollingPolicy>
   </appender>
   <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -32,14 +32,14 @@
     <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
       <level>ERROR</level>
     </filter>
-    <File>../logs/jetty/push-group-error.log</File>
+    <File>../push-group/logs/jetty/push-group-error.log</File>
     <encoder>
       <pattern>
         %d{HH:mm:ss.SSS} %-5p [%t] [%c] %X{tid} - %m%n
       </pattern>
     </encoder>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>../logs/jetty/push-group-error.log.%d{yyyyMMdd}</fileNamePattern>
+      <fileNamePattern>../push-group/logs/jetty/push-group-error.log.%d{yyyyMMdd}</fileNamePattern>
     </rollingPolicy>
   </appender>
 
